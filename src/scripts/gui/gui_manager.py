@@ -22,7 +22,8 @@ from tkcalendar import DateEntry, Calendar
 
 import threading
 import time
-
+from src.scripts.system.config import DMD, DMDD
+# from src.scripts.system import config
 
 ########################################################################################################################
 ########## GUI MANAGER #################################################################################################
@@ -151,7 +152,7 @@ class Window_1(tk.Toplevel):
             self.manager.show_window_sa(self.relation)
             self.manager.windows[self.relation].update_label(f"{i}")
             time.sleep(1)  # Simulate a time-consuming task
-            print(i)
+            print(i, DMD.REF_META["LOG_DAYS_TO_DELETE"])
             i += 1
         self.on_reset()
 
@@ -260,6 +261,9 @@ def check_processing_done(manager, root):
 def main_func():
     for x in range(10):
         print("daniel1")
+        print(DMDD["LOG_DAYS_TO_DELETE"])
+        DMD.set_attribute("LOG_DAYS_TO_DELETE", DMDD["LOG_DAYS_TO_DELETE"]+x)
+        print(DMDD["LOG_DAYS_TO_DELETE"])
         time.sleep(1)
 
 def main_func2():
@@ -278,7 +282,8 @@ def main_gui_start():
 
     # Start checking
     # threading.Thread(target=check_processing_done(manager=manager, root=root), daemon=True).start()
-    threading.Thread(target=check_processing_done, args=(manager, root), daemon=True).start()
+    tr_check_processing_done = threading.Thread(target=check_processing_done, args=(manager, root), daemon=True)
+    tr_check_processing_done.start()
 
     # check_processing_done()
     t1 = threading.Thread(target=main_func, daemon=True)
