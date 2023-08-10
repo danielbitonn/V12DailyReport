@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Executable Runner</title>
+</head>
+<body>
+    <h1>Run a Local Command</h1>
+    <form action="/run" method="post">
+        <label for="command1">Enter Command:</label>
+        <input type="text" id="command1" name="command1" required>
+        <button type="submit">Run</button>
+    </form>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Command Runner</title>
+</head>
+<body>
+    <h1>Execute a Command</h1>
+    <form action="/run" method="post">
+        <label for="command2">Enter Command:</label>
+        <input type="text" name="command" id="command2">
+        <button type="submit">Run</button>
+    </form>
+</body>
+</html>

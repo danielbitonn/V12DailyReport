@@ -4,7 +4,7 @@ import sys
 #                       IMPORTS
 #          SYSTEM:
 #                       GUI MANAGER
-#                       APP LOGGER
+#                       app LOGGER
 #                       BKG # AZURE INTERFACE
 #                       DATE & TIME PICKER [time-dimmed]
 #
@@ -55,7 +55,6 @@ class WindowManager:
         for window_name, window in self.windows.items():
             if window_name == name:
                 window.deiconify()
-
     def hide_window(self, name):
         self.windows[name].withdraw()
         if all(window.winfo_viewable() == 0 for window in self.windows.values()):
@@ -270,15 +269,14 @@ def main_func2():
     for x in range(100):
         print("daniel2")
         time.sleep(1)
-
 '''
 ###########################################    MAIN HERE     ########################################################### 
 '''
 def main_gui_start():
     root = tk.Tk()
-
     manager = WindowManager(root)
     func_main_window_creator(manager, root)
+    root.protocol("WM_DELETE_WINDOW", root.destroy) 
 
     # Start checking
     # threading.Thread(target=check_processing_done(manager=manager, root=root), daemon=True).start()
@@ -288,6 +286,7 @@ def main_gui_start():
     # check_processing_done()
     t1 = threading.Thread(target=main_func, daemon=True)
     t1.start()
+
     # The last row in the code which required the GUI
     root.mainloop()
 
