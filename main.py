@@ -8,15 +8,21 @@
 #                       BKG # AZURE INTERFACE
 #                       DATE & TIME PICKER [time-dimmed]
 #  #####################################################################################################################
+PORT = 6005
+ACT = {
+        "web_gui": 0,
+
+}
+
 
 import threading
 import time
 from src.scripts.system.config import DMDD
 from src.scripts.system.applogger import APPLOGGER
 from src.scripts.gui.gui_manager import main_gui_start
+# WEB GUI
 from src.scripts.gui.web_gui import start_web_server, get_default_browser_windows,terminate_process_by_port, should_shutdown
 import requests
-
 
 def is_browser_open(driver):
     try:
@@ -36,24 +42,23 @@ def monitor_browser(driver, should_shutdown):
                 driver.quit()  # Close the browser
             break
 
-
-PORT = 6005
-
 if __name__ == '__main__':
 
-    try:
-        result = terminate_process_by_port(PORT)
-        print(result)
-    except Exception as e:
-        print(e)
+    if ACT['web_gui']:
+        try:
+            result = terminate_process_by_port(PORT)
+            print(result)
+        except Exception as e:
+            print(e)
 
-    # # TODO: web_gui execution
-    web_server_thread = threading.Thread(target=start_web_server, args=(PORT,), daemon=True)
-    web_server_thread.start()
+        # TODO: web_gui execution
+        web_server_thread = threading.Thread(target=start_web_server, args=(PORT,), daemon=True)
+        web_server_thread.start()
 
-    # TODO: open browser
-    driver = get_default_browser_windows()
-    driver.get(f"http://127.0.0.1:{PORT}")
+        # TODO: open browser
+        driver = get_default_browser_windows()
+        driver.get(f"http://127.0.0.1:{PORT}")
+
 
     # TODO: METADATA thread
     print(f'fdsfsdf:{DMDD}')
@@ -63,15 +68,19 @@ if __name__ == '__main__':
     # META_DATA = qtr_meta_data.get()
     # print(META_DATA)
 
-
     print("THE")
-    monitor_thread = threading.Thread(target=monitor_browser, args=(driver, should_shutdown), daemon=True)
-    monitor_thread.start()
+
+    if ACT['web_gui']:
+        monitor_thread = threading.Thread(target=monitor_browser, args=(driver, should_shutdown), daemon=True)
+        monitor_thread.start()
 
     # TODO: Main Gui Thread
     main_gui_start()
 
-    requests.post(f'http://127.0.0.1:{PORT}/shutdown_check')  # Shut down the server
-    if driver:
-        driver.quit()  # Close the browser
+    if ACT['web_gui']:
+        requests.post(f'http://127.0.0.1:{PORT}/shutdown_check')  # Shut down the server
+        if driver:
+            driver.quit()  # Close the browser
+
+
     print("END")
