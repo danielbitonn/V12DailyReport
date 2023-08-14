@@ -6,7 +6,7 @@
         "DT_FORMAT": "%Y-%m-%d",
         "T_FORMAT": "%H:%M",
         "DT_YYYY_MM_DD__HH_MM": "%Y-%m-%d__%H:%M",
-        "METADATA_TODAY": "2023-08-13",
+        "METADATA_TODAY": "2023-08-14",
         "ROOT_PATH": "output",
         "FILES_PATH": "files",
         "IMAGES_PATH": "images",

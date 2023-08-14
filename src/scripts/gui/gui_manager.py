@@ -286,19 +286,20 @@ def main_gui_start():
     # check_processing_done()
     t1 = threading.Thread(target=main_func, daemon=True)
     t1.start()
-
-    # The last row in the code which required the GUI
     root.mainloop()
 
-###########################################    START HERE     ##########################################################
 
+
+
+
+
+
+
+
+###########################################    START HERE     ##########################################################
 # main_gui_start()
-#
 # t2= threading.Thread(target=main_func2, daemon=True)
 # t2.start()
 # main_gui_start()
-
-
-
 #ref#
 # manager.show_window("Window 3")

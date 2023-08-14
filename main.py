@@ -8,6 +8,8 @@
 #                       BKG # AZURE INTERFACE
 #                       DATE & TIME PICKER [time-dimmed]
 #  #####################################################################################################################
+from src.scripts.gui.gui_handling_system import main_gui_handling_system
+
 PORT = 6005
 ACT = {
         "web_gui": 0,
@@ -17,12 +19,14 @@ ACT = {
 
 import threading
 import time
-from src.scripts.system.config import DMDD
-from src.scripts.system.applogger import APPLOGGER
-from src.scripts.gui.gui_manager import main_gui_start
 # WEB GUI
 from src.scripts.gui.web_gui import start_web_server, get_default_browser_windows,terminate_process_by_port, should_shutdown
 import requests
+
+from src.scripts.system.config import DMDD
+from src.scripts.system.applogger import APPLOGGER
+from src.scripts.gui.gui_manager import main_gui_start
+
 
 def is_browser_open(driver):
     try:
@@ -59,7 +63,6 @@ if __name__ == '__main__':
         driver = get_default_browser_windows()
         driver.get(f"http://127.0.0.1:{PORT}")
 
-
     # TODO: METADATA thread
     print(f'fdsfsdf:{DMDD}')
     APPLOGGER.info(f'DONE # <read_or_write_meta_data_json()> has been completed')
@@ -75,7 +78,14 @@ if __name__ == '__main__':
         monitor_thread.start()
 
     # TODO: Main Gui Thread
-    main_gui_start()
+    main_gui_handling_system()
+    # main_gui_start()
+
+
+
+
+
+    print("END")
 
     if ACT['web_gui']:
         requests.post(f'http://127.0.0.1:{PORT}/shutdown_check')  # Shut down the server
@@ -83,4 +93,4 @@ if __name__ == '__main__':
             driver.quit()  # Close the browser
 
 
-    print("END")
+
