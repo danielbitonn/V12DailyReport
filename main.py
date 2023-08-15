@@ -8,24 +8,20 @@
 #                       BKG # AZURE INTERFACE
 #                       DATE & TIME PICKER [time-dimmed]
 #  #####################################################################################################################
-from src.scripts.gui.gui_handling_system import main_gui_handling_system
 
-PORT = 6005
-ACT = {
-        "web_gui": 0,
-
-}
 
 
 import threading
 import time
 # WEB GUI
-from src.scripts.gui.web_gui import start_web_server, get_default_browser_windows,terminate_process_by_port, should_shutdown
+from src.scripts.gui.web_gui import start_web_server, get_default_browser_windows, terminate_process_by_port, should_shutdown
 import requests
+PORT = 6005
+ACT = {"web_gui": 0, }
 
 from src.scripts.system.config import DMDD
 from src.scripts.system.applogger import APPLOGGER
-from src.scripts.gui.gui_manager import main_gui_start
+from src.scripts.gui.gui_handling_system import main_gui_handling_system # from src.scripts.gui.gui_manager import main_gui_start
 
 
 def is_browser_open(driver):
