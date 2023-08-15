@@ -2,11 +2,8 @@ import threading
 import time
 import datetime
 import os
-
-
 from PIL import Image, ImageTk
 import tkinter as tk
-from tkinter import ttk
 from tkinter.ttk import Progressbar
 from tkcalendar import DateEntry, Calendar
 class ToolTip(object):
@@ -304,8 +301,8 @@ class Window_4(BaseWindow):
         self.f2.pack(anchor="n", padx=10, pady=5)
 
         ### Large Calendar widget ###
-        self.calendar = Calendar(self.f2, selectmode="day", font="Arial 10")
-        self.calendar.pack(side="top", padx=5, pady=10)
+        self.calendar = Calendar(self.f2, selectmode="day", font="Arial 22")
+        self.calendar.pack(side="top", padx=5, pady=10, fill=tk.BOTH, expand=True)
 
         ### Time Picker using Spinbox ###
         self.time_frame = tk.Frame(self.f2)
@@ -357,13 +354,20 @@ class Window_4(BaseWindow):
     def create_frame_3(self):                                                                                           # Frame 3 (F3): "confirm"
         self.f3 = tk.Frame(self)
         self.f3.pack(anchor="n", padx=10, pady=5)
-        self.confirm_button = tk.Button(self.f3, text="Confirm", command=self.confirm_and_proceed, font="Arial 30")
-        self.confirm_button.pack(pady=10)
+        image = Image.open(os.path.join('src', 'media\\supporter.png'))
+        self.supporter_image = ImageTk.PhotoImage(image)
+        image = Image.open(os.path.join('src', 'media\\v12.png'))
+        self.press_pc_image = ImageTk.PhotoImage(image)
+        self.supporter_button = tk.Button(self.f3, image=self.supporter_image, text="Proceed as Supporter", font=("Arial", 10, "bold"), compound=tk.BOTTOM, command=self.supporter_action)
+        self.press_pc_button = tk.Button(self.f3, image=self.press_pc_image, text="Proceed as Press-PC", font=("Arial", 10, "bold"), compound=tk.BOTTOM, command=self.press_pc_action)
+        self.supporter_button.pack(side="left", padx=10)
+        self.press_pc_button.pack(side="left", padx=10)
 
     @classmethod
     def create_activation_button(cls, root, command):
         text = "Activate " + cls.__name__
         return cls.create_text_button(root, command, text=text)
+
     def reset_fields(self):
         print("reset_fields function called!")
         ### Resetting DateEntry and Calendar ###
@@ -451,6 +455,11 @@ class Window_4(BaseWindow):
         print(f"Start Date: {self.start_date_var.get()}, Start Time: {self.start_time_var.get()}")                      # TODO: Placeholder for functionality that you'd like to add when 'Confirm' is clicked. For now, we'll simply display the values chosen in this window.
         print(f"End Date: {self.end_date_var.get()}, End Time: {self.end_time_var.get()}")                              # TODO: If you want to transition to the next window, add the necessary code here. For demonstration purposes, we'll just close the current window.
         self.on_close()
+    def supporter_action(self):
+        print("Supporter button clicked!")                                                                              # TODO: Add your logic here...SUPPORTER
+    def press_pc_action(self):
+        print("Press-PC button clicked!")                                                                               # TODO: Add your logic here...PRESS_PC
+
 class LoadingBarWindow(tk.Toplevel):
     """ LoadingBarWindow: This class represents a loading bar window, which can be shown while a process is running.
         It includes a method to handle the closing event and stop the current process if needed. """
