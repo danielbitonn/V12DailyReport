@@ -121,7 +121,7 @@ class WindowManager:                                                            
     def __init__(self, root):
         self.windows = {}
         self.root = root
-        self.window_history = []                                                                                        # Stack to keep track of window history
+        self.window_history = []                                                                                        # Stack to keep track of window history.
         APPLOGGER.info(f'The <{inspect.currentframe().f_code.co_name}> of <WindowManager CLASS> has been created.')
     def open_loading_bar(self, stop_function=None):
         return LoadingBarWindow(self.root, self, stop_function)
