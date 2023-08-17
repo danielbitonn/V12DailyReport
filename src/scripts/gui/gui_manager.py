@@ -290,12 +290,6 @@ def main_gui_start():
 
 
 
-
-
-
-
-
-
 ###########################################    START HERE     ##########################################################
 # main_gui_start()
 # t2= threading.Thread(target=main_func2, daemon=True)

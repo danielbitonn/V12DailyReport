@@ -3,7 +3,7 @@ import time
 import logging
 import os
 import glob
-from src.scripts.system.config import DMD, DMDD
+from src.scripts.system.config import DMDD
 
 ########################################################################################################################
 ########## Logger ######################################################################################################
@@ -35,7 +35,6 @@ def auto_func_delete_old_files(directory, days):
     except:
         1*1
         return []
-
 def func_main_logger():
     st = time.time()
     deleted_log_files = []
