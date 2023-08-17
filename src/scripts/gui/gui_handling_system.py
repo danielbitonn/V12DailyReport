@@ -11,7 +11,6 @@
 #       Press-PC GUI & Functionality
 #                                   * Open supporter GUI & Loading Animation
 #       Remove prints & todos debugging notes
-
 ########################################################################################################################
 ########################################################################################################################
 ########################################################################################################################
@@ -22,6 +21,7 @@ ANIMATION_OR_PICTURE_FLAG = True                                                
 ### Internal Imports ###
 from src.scripts.system.applogger import APPLOGGER
 from src.scripts.system.config import DMDD, DMD, azure_initialization
+
 ### External Imports ###
 import threading
 import time
