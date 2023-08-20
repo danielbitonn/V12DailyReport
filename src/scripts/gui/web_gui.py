@@ -1,3 +1,7 @@
+# TODO:
+#       Write logs!
+#
+### General Imports ###
 from flask import Flask, render_template, request, Response
 from src.scripts.system.applogger import APPLOGGER
 import threading
@@ -5,9 +9,10 @@ import subprocess
 from selenium import webdriver
 import winreg
 import psutil
-
+### Global Flags ###
 should_shutdown = False
-
+ACT = {"WEB_GUI_FLAG": 0, "PORT": 6009}
+### Initialization ###
 app = Flask(__name__)
 app.logger = APPLOGGER
 def get_default_browser_windows():
@@ -55,11 +60,8 @@ def start_web_server(port):
             if shutdown_func is not None:
                 shutdown_func()
         return Response(status=204)
-
     app.add_url_rule('/shutdown_check', 'shutdown_check', shutdown_check, methods=['POST'])
     app.run(host='127.0.0.1', port=port, debug=True, use_reloader=False, threaded=True)
-
-
 def terminate_process_by_port(port):
     for conn in psutil.net_connections(kind='inet'):
         if conn.laddr.port == port:
@@ -70,4 +72,3 @@ def terminate_process_by_port(port):
             process.terminate()
             return f"Process {process_name} using port {port} has been terminated."
     return f"Port {port} is not being used."
-
