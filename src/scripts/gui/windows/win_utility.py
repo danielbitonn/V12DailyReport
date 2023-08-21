@@ -47,28 +47,24 @@ def handle_thread_completion(thread, st):                                       
     if thread.name=="tr_root_window_definition":
         pass
     elif thread.name=="azure_initialization_thread":                                                                    # Updating From Azure Data
+        # TODO: verify if the Azure connection Succeed or we are locally >>>> If Locally treat the SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)
         SHARE_DATA.PRESS_SN.extend(list(SHARE_DATA.CONFIG["conf.json"]["presses"]))
         SHARE_DATA.DICT_PRESS_STATUS_OPTIONS_n_COLORS = colors_dict_to_tuples(SHARE_DATA.CONFIG["conf.json"]["design"]["press_status_colors"])
         SHARE_DATA.DICT_SHIFT_OPTIONS = tuple(SHARE_DATA.CONFIG["conf.json"]["design"]["shift_options"].keys())
         SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)                            # updating dropdown list when the thread is done
-        SHARE_DATA.MANAGER.register_window(SHARE_DATA.WINDOWS_CLASSES["Window_5"], shared_data=SHARE_DATA, extra_width=1, extra_height=1)  # passing the shared data object and extra width&height
+        # SHARE_DATA.MANAGER.register_window(SHARE_DATA.WINDOWS_CLASSES["Window_Supporter"], shared_data=SHARE_DATA, extra_width=1, extra_height=1)  # passing the shared data object and extra width&height
         if DMDD["METADATA_FLAG"]:
             try:
                 SHARE_DATA.PRESS_LIST_OF_BLOBS = SHARE_DATA.METADATA[DMDD["PRESS_DICT_SN"]]
             except Exception as e:
                 # TODO USING OPEN JSON FUNC FROM OLDER VERSION - Remember to update (SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN))!
                 APPLOGGER.error(logger_explain_template(func={inspect.currentframe().f_code.co_name}, err=e))
-                # SHARE_DATA.ERROR_MESSAGE_FLAG = messagebox.showerror(title="Error", message=f'Details:\n{e}')
     elif thread.name=="background_tasks_window_5":
         try:
-            # SHARE_DATA.MANAGER.windows["Window_5"].temp_func()
-            print("<temp><temp><temp><temp><temp><temp><temp><temp><temp><temp><temp><temp><temp><temp>")
+            SHARE_DATA.MANAGER.windows["Window_Supporter"].stop_loading_animation()
         except Exception as e:
             # TODO: Error handling system regarding missing rowData!
             APPLOGGER.error(logger_explain_template(func={inspect.currentframe().f_code.co_name}, err=e))
-            # SHARE_DATA.PAUSE_ALL_THREADS_EVENT.set()                                                                    # Pause all threads
-            # SHARE_DATA.ERROR_MESSAGE_FLAG = messagebox.showerror(title="Error", message=f'Details:\n{e}')
-            # SHARE_DATA.PAUSE_ALL_THREADS_EVENT.clear()                                                                  # Resume all threads after closing the messagebox
     else:
         pass
     print(f"Thread {thread.name} has completed # Duration {time.time() - st}")
@@ -77,12 +73,6 @@ def handle_thread_completion(thread, st):                                       
 def background_thread_checker():
     st = time.time()
     while True:
-        # if SHARE_DATA.PAUSE_ALL_THREADS_EVENT.is_set():
-        #     print(SHARE_DATA.ERROR_MESSAGE_FLAG)
-        #     while SHARE_DATA.ERROR_MESSAGE_FLAG == "ok":
-        #         time.sleep(1)  # Sleep until the event is cleared
-        #     SHARE_DATA.ERROR_MESSAGE_FLAG = ""
-        #     continue
         with SHARE_DATA.THREADS_LIST_LOCK:
             print(SHARE_DATA.THREADS_LIST)
             APPLOGGER.debug(f"Threads <{SHARE_DATA.THREADS_LIST}> are running.")
@@ -205,7 +195,6 @@ class WindowManager:                                                            
             self.windows[name].show()
             # self.windows[name].update_idletasks()                                                                     # Update layout calculations
             self.windows[name].adjust_size(self.windows[name].extra_width, self.windows[name].extra_height)             # Adjust the window size
-            # current_window_name = next((key for key, win in self.windows.items() if win.winfo_viewable()), None)
             self.root.withdraw()
         else:
             self.root.deiconify()
@@ -225,9 +214,7 @@ class WindowManager:                                                            
         self.windows[name].hide()
     def close_window(self, current_window_name):
         self.hide_window(current_window_name)
-        # print(self.window_history)
         if self.window_history:
-            # self.window_history.pop()
             previous_window_name = self.window_history[-2] if self.window_history else "root_window"
             self.show_window(previous_window_name)
             APPLOGGER.info(f'The <{current_window_name}> window has been closed. The <{previous_window_name}> has show-up.')
@@ -252,7 +239,7 @@ class WindowManager:                                                            
         related_window.show()                                                                                           # Logic to manage the relationship between windows, e.g., close one, open another, etc.
         APPLOGGER.info(f'Window <{current_window_name}> hide and window <{related_window_name}> show-up.')
 class BaseWindow(tk.Toplevel):                                                                                          # Create a base class that will contain common functionalities like closing, showing, hiding, etc.
-    def __init__(self, root, manager, shared_data=None, relation=None, extra_width=0, extra_height=0):
+    def __init__(self, root, manager, shared_data=None, relation=None, extra_width=0, extra_height=0, adjust_size=True):
         super().__init__(root)
         self.root = root                                                                                                # Explicitly set the root attribute
         self.withdraw()
@@ -260,7 +247,8 @@ class BaseWindow(tk.Toplevel):                                                  
         self.shared_data = shared_data
         self.relation = relation
         self.protocol('WM_DELETE_WINDOW', self.on_close)
-        self.adjust_size(extra_width, extra_height)                                                                     # Call the method to adjust the size based on contents
+        if adjust_size:
+            self.adjust_size(extra_width, extra_height)
         APPLOGGER.info(f'The BaseWindow class has been created.')
     @classmethod
     def create_image_button(cls, root, command, image_path):

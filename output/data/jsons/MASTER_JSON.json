@@ -57,6 +57,13 @@
                     "Morning",
                     "Night"
                 ]
+            },
+            {
+                "date": "2023-08-21",
+                "machine_state": "Printing",
+                "shift": [
+                    "Morning"
+                ]
             }
         ]
     }

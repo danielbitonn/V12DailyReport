@@ -22,7 +22,7 @@ from src.scripts.gui.windows.win_1 import Window_1
 from src.scripts.gui.windows.win_2 import Window_2
 from src.scripts.gui.windows.win_3 import Window_3
 from src.scripts.gui.windows.win_4 import Window_4
-from src.scripts.gui.windows.win_5 import Window_5
+from src.scripts.gui.windows.win_supporter import Window_Supporter
 ### External Imports ###
 import threading
 import time
@@ -44,8 +44,11 @@ def root_window_definition(root, extra_width=0, extra_height=0):
     height = root.winfo_height() + extra_height
     root.geometry(f"{width}x{height}")                                                                                  # Set the new size
     root.withdraw()
-def background_SUPPORTER(manager):
-    manager.register_window(Window_5, shared_data=SHARE_DATA, extra_width=1, extra_height=1)                            # passing the shared data object and extra width&height
+def background_SUPPORTER(manager, pre_req_tr):
+    pre_req_tr.join()
+    while SHARE_DATA.DICT_SHIFT_OPTIONS is None or SHARE_DATA.DICT_PRESS_STATUS_OPTIONS_n_COLORS is None:
+        time.sleep(1)
+    manager.register_window(Window_Supporter, shared_data=SHARE_DATA, extra_width=1, extra_height=1)                            # passing the shared data object and extra width&height
 def background_PRESS(manager):
     for x in range(100):
         print(x+100)
@@ -70,9 +73,9 @@ def MAIN_GUI_HANDLING_SYS():
     register_thread(azure_initialization_thread)
 
     # # TODO: background SUPPORTER GUI building and withdraw()
-    # tr_background_SUPPORTER = threading.Thread(name="background_SUPPORTER", target=background_SUPPORTER, args=(manager,))
-    # tr_background_SUPPORTER.start()
-    # register_thread(tr_background_SUPPORTER)
+    tr_background_SUPPORTER = threading.Thread(name="background_SUPPORTER", target=background_SUPPORTER, args=(manager, azure_initialization_thread))
+    tr_background_SUPPORTER.start()
+    register_thread(tr_background_SUPPORTER)
 
     # TODO: background Press-PC GUI building and withdraw()
     tr_background_PRESS = threading.Thread(name="background_PRESS", target=background_PRESS, args=(manager,), daemon=True)
@@ -84,8 +87,16 @@ def MAIN_GUI_HANDLING_SYS():
     manager.register_window(Window_2, shared_data=SHARE_DATA, extra_width=20, extra_height=10)                          # passing the shared data object and extra width&height
     manager.register_window(Window_3, shared_data=SHARE_DATA, extra_width=100, extra_height=100)                        # passing the shared data object and extra width&height
     manager.register_window(Window_4, shared_data=SHARE_DATA, extra_width=1, extra_height=1)                            # passing the shared data object and extra width&height
+
+    # manager.register_window(Window_Supporter, shared_data=SHARE_DATA, extra_width=100, extra_height=100)  # adjust extra_width and extra_height as needed
+
     # manager.register_window(Window_5, shared_data=SHARE_DATA, extra_width=1, extra_height=1)                            # passing the shared data object and extra width&height
-    SHARE_DATA.WINDOWS_CLASSES["Window_5"] = Window_5
+    # SHARE_DATA.WINDOWS_CLASSES["Window_5"] = Window_5
+    SHARE_DATA.WINDOWS_CLASSES["Window_Supporter"] = Window_Supporter
+
+
+
+
     # Automatically open Window_4
     manager.show_window("Window_4")
     ### Start root_window_definition subprocess ###
