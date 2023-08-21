@@ -79,7 +79,7 @@ class Window_Supporter(BaseWindow):
         self.f0 = tk.Frame(self)
         self.f0.pack(anchor="n", fill=tk.BOTH, expand=False)
     def load_media(self):
-        animation_resize = [200, 40]
+        animation_resize = [400, 80]
         self.animate_flag = True                                                                                        # Logic to stop the loop
         if ANIMATION_OR_PICTURE_FLAG:
             self.loading_frame_index = 0

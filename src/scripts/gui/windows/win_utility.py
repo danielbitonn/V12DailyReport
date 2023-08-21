@@ -52,7 +52,7 @@ def handle_thread_completion(thread, st):                                       
         SHARE_DATA.DICT_PRESS_STATUS_OPTIONS_n_COLORS = colors_dict_to_tuples(SHARE_DATA.CONFIG["conf.json"]["design"]["press_status_colors"])
         SHARE_DATA.DICT_SHIFT_OPTIONS = tuple(SHARE_DATA.CONFIG["conf.json"]["design"]["shift_options"].keys())
         SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)                            # updating dropdown list when the thread is done
-        # SHARE_DATA.MANAGER.register_window(SHARE_DATA.WINDOWS_CLASSES["Window_Supporter"], shared_data=SHARE_DATA, extra_width=1, extra_height=1)  # passing the shared data object and extra width&height
+        # SHARE_DATA.MANAGER.register_window(SHARE_DATA.WINDOWS_CLASSES["win_supporter"], shared_data=SHARE_DATA, extra_width=1, extra_height=1)  # passing the shared data object and extra width&height
         if DMDD["METADATA_FLAG"]:
             try:
                 SHARE_DATA.PRESS_LIST_OF_BLOBS = SHARE_DATA.METADATA[DMDD["PRESS_DICT_SN"]]
