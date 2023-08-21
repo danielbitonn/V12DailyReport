@@ -59,7 +59,7 @@ def auto_func_delete_old_files():
     return DMDD["DELETED_FILES"]
 class conf:
     def __init__(self):
-        self.METADATA_FLAG          = 0
+        self.METADATA_FLAG                          = 0
         ### Attributes ###
         self.VERSION                                = "V115"
         self.METADATA_DATE                          = "2023-08-07"

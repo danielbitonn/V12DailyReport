@@ -78,7 +78,7 @@ class Window_1(BaseWindow):
         self.stop_event.clear()
         self.start_button.config(state='normal')
         self.loading_bar_window.on_close()                                                                              # Close the loading bar window
-        APPLOGGER.info(f'<{self.T}> reset.')
+        APPLOGGER.info(f'<{self.T}> initialization_win_supporter.')
     def on_close(self):
         super().on_close()                                                                                              # If additional closing behavior specific to that window is necessary
         APPLOGGER.info(f'<{self.T}> closed!')                                                                           # The super().on_close() Call the base class's on_close method () from 'BaseWindow' class

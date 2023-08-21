@@ -157,8 +157,7 @@ class Window_4(BaseWindow):
         self.press_pc_button = tk.Button(self.f3, image=self.press_pc_image, text="Proceed as Press-PC", font=("Arial", 10, "bold"), compound=tk.BOTTOM, command=self.press_pc_action)
         self.supporter_button.pack(side="left", padx=10)
         self.press_pc_button.pack(side="left", padx=10)
-        self.supporter_button.config(image=self.dimmed_supporter_image_tk, state=tk.DISABLED)                           # Set the dimmed image to the button and disable it
-        self.press_pc_button.config(image=self.dimmed_press_pc_image_tk, state=tk.DISABLED)                             # Set the dimmed image to the button and disable it
+        self.activate_deactivate_pic_images(flag=False)                                                                 # Set the dimmed image to the button and disable it
         APPLOGGER.info(f'The Frame <{inspect.currentframe().f_code.co_name}> has been created.')
     @classmethod
     def create_activation_button(cls, root, command):
@@ -210,8 +209,7 @@ class Window_4(BaseWindow):
             self.reset_button.pack(side="left", padx=10)
             self.dev_checkbox.pack(anchor="ne")
             self.press_sn_dropdown.pack(anchor="n")
-            self.supporter_button.config(image=self.supporter_image, state=tk.NORMAL)
-            self.press_pc_button.config(image=self.press_pc_image, state=tk.NORMAL)
+            self.activate_deactivate_pic_images(flag=True)                                                              # Set regular image to the button enabled
             APPLOGGER.info(f'The <{_}> done - list is updated!')
         except Exception as e:
             APPLOGGER.error(f'{logger_explain_template(func=_, err=e)}')
@@ -271,6 +269,13 @@ class Window_4(BaseWindow):
         enhancer = ImageEnhance.Brightness(image)
         dimmed_image = enhancer.enhance(0.5)                                                                            # Reduce brightness to 50%
         return ImageTk.PhotoImage(dimmed_image)
+    def activate_deactivate_pic_images(self, flag):
+        if flag:
+            self.supporter_button.config(image=self.supporter_image, state=tk.NORMAL)
+            self.press_pc_button.config(image=self.press_pc_image, state=tk.NORMAL)
+        else:
+            self.supporter_button.config(image=self.dimmed_supporter_image_tk, state=tk.DISABLED)                       # Set the dimmed image to the button and disable it
+            self.press_pc_button.config(image=self.dimmed_press_pc_image_tk, state=tk.DISABLED)                         # Set the dimmed image to the button and disable it
     def confirm_and_proceed(self):
         SHARE_DATA.START_DATE = self.start_date_var.get()
         SHARE_DATA.START_TIME = self.start_time_var.get()
@@ -282,8 +287,7 @@ class Window_4(BaseWindow):
         self.button_clicked = True
         self.confirm_and_proceed()
         self.manager.hide_window(self.__class__.__name__)
-        self.manager.windows["Window_5"].gate_func_win_5()
-        self.manager.show_window("Window_5")
+        self.manager.show_window("Window_Supporter")
         print("Supporter button clicked!")                                                                              # TODO: Add your logic here...SUPPORTER
     def press_pc_action(self):
         self.button_clicked = True

@@ -9,6 +9,10 @@
 #                       DATE & TIME PICKER [time-dimmed]
 #  #####################################################################################################################
 ### General Imports ###
+_temp = False
+if _temp:
+    from temp import *
+
 import os
 import sys
 import threading
@@ -18,7 +22,7 @@ import inspect
 ### EXTERNAL IMPORT ###
 from src.scripts.system.applogger import APPLOGGER
 from src.scripts.system.config import folders_handler, auto_func_delete_old_files
-from src.scripts.gui.gui_handling_system import MAIN_GUI_HANDLING_SYS                                                # from src.scripts.gui.gui_manager import main_gui_start
+from src.scripts.gui.gui_handling_system import MAIN_GUI_HANDLING_SYS                                                   # from src.scripts.gui.gui_manager import main_gui_start
 ###### WEB GUI
 from src.scripts.gui.web_gui import start_web_server, get_default_browser_windows, terminate_process_by_port, should_shutdown, ACT
 import requests
@@ -49,31 +53,32 @@ def files_n_folders():
 ########################################################################################################################
 ########################################################################################################################
 if __name__ == '__main__':
-    st = time.time()
-    threading.Thread(target=files_n_folders, daemon=True).start()
-    threading.Thread(target=auto_func_delete_old_files, daemon=True).start()
-    if ACT['WEB_GUI_FLAG']:
-        try:
-            result = terminate_process_by_port(ACT["PORT"])
-            APPLOGGER.info(f'The <terminate_process_by_port> function is done! # <{result}> #')
-        except Exception as e:
-            APPLOGGER.error(f'{logger_explain_template(func=__name__, err=e)}')
+    if not _temp:
+        st = time.time()
+        threading.Thread(target=files_n_folders, daemon=True).start()
+        threading.Thread(target=auto_func_delete_old_files, daemon=True).start()
+        if ACT['WEB_GUI_FLAG']:
+            try:
+                result = terminate_process_by_port(ACT["PORT"])
+                APPLOGGER.info(f'The <terminate_process_by_port> function is done! # <{result}> #')
+            except Exception as e:
+                APPLOGGER.error(f'{logger_explain_template(func=__name__, err=e)}')
 
-        web_server_thread = threading.Thread(target=start_web_server, args=(ACT["PORT"],), daemon=True)                 # TODO: web_gui execution
-        web_server_thread.start()
-        driver = get_default_browser_windows()                                                                          # TODO: open browser
-        APPLOGGER.info(f'Web started by <start_web_server()>')
-        driver.get(f'http://127.0.0.1:{ACT["PORT"]}')
-        APPLOGGER.info(f'Web started by <start_web_server()>')
+            web_server_thread = threading.Thread(target=start_web_server, args=(ACT["PORT"],), daemon=True)                 # TODO: web_gui execution
+            web_server_thread.start()
+            driver = get_default_browser_windows()                                                                          # TODO: open browser
+            APPLOGGER.info(f'Web started by <start_web_server()>')
+            driver.get(f'http://127.0.0.1:{ACT["PORT"]}')
+            APPLOGGER.info(f'Web started by <start_web_server()>')
 
-        monitor_thread = threading.Thread(target=monitor_browser, args=(driver, should_shutdown), daemon=True)
-        monitor_thread.start()
-    ### Main Gui Thread ###
-    MAIN_GUI_HANDLING_SYS()                                                                                          # main_gui_start()
-    if ACT['WEB_GUI_FLAG']:
-        requests.post(f'http://127.0.0.1:{ACT["PORT"]}/shutdown_check')                                                 # Shut down the server
-        try:
-            driver.quit()                                                                                               # Close the browser
-        except Exception as e:
-            APPLOGGER.error(f'{logger_explain_template(func="Close_browser", err=e)}')
-    print("END")
+            monitor_thread = threading.Thread(target=monitor_browser, args=(driver, should_shutdown), daemon=True)
+            monitor_thread.start()
+        ### Main Gui Thread ###
+        MAIN_GUI_HANDLING_SYS()                                                                                          # main_gui_start()
+        if ACT['WEB_GUI_FLAG']:
+            requests.post(f'http://127.0.0.1:{ACT["PORT"]}/shutdown_check')                                                 # Shut down the server
+            try:
+                driver.quit()                                                                                               # Close the browser
+            except Exception as e:
+                APPLOGGER.error(f'{logger_explain_template(func="Close_browser", err=e)}')
+        print("END")
