@@ -1,4 +1,4 @@
-from src.scripts.system.config import DMDD, DMD
+from src.scripts.system.config import DMD
 from src.scripts.system.applogger import APPLOGGER
 from src.scripts.gui.windows.win_utility import SHARE_DATA, BaseWindow, logger_explain_template, create_tooltip
 import time
@@ -9,8 +9,6 @@ import inspect
 from PIL import Image, ImageTk, ImageEnhance
 import tkinter as tk
 from tkcalendar import Calendar
-
-ANIMATION_OR_PICTURE_FLAG = DMDD["ANIMATION_OR_PICTURE_FLAG"]                                                           # Animation or picture
 class Window_4(BaseWindow):
     def __init__(self, root, manager, shared_data=None, relation=None, extra_width=0, extra_height=0):
         super().__init__(root, manager, shared_data, relation, extra_width, extra_height)
@@ -54,7 +52,7 @@ class Window_4(BaseWindow):
     def start_loading_animation(self):
         animation_resize = [200, 40]
         self.animate_flag = True                                                                                        # Logic to stop the loop
-        if ANIMATION_OR_PICTURE_FLAG:
+        if SHARE_DATA.METADATA.get("ANIMATION_OR_PICTURE_FLAG", DMD.ANIMATION_OR_PICTURE_FLAG):
             self.loading_frame_index = 0
             self.loading_frames = []                                                                                    # List to hold each frame
             frames_folder = os.path.join('src', 'media', 'loading_frames')
@@ -196,7 +194,9 @@ class Window_4(BaseWindow):
         return ["..."]
     def get_default_press_sn(self):
         APPLOGGER.info(f'The <{inspect.currentframe().f_code.co_name}> has been activated!')                            # TODO: Placeholder default values
-        return DMDD["DICT_PRESS_SN"] if DMDD["DICT_PRESS_SN"] != DMD.DICT_PRESS_SN else SHARE_DATA.PRESS_SN[0]          # Return local_machine if there is local METADATA_CONF.json
+        # TODO: Check before delete!
+        # return DMDD["LOCAL_METADATA"]["PREVIOUS_PRESS_SN"] if DMDD["LOCAL_METADATA"]["PREVIOUS_PRESS_SN"] != DMD.PREVIOUS_PRESS_SN else SHARE_DATA.PRESS_SN[0]          # Return local_machine if there is local METADATA_CONF.json
+        return SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"] if SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"] != DMD.PREVIOUS_PRESS_SN else SHARE_DATA.PRESS_SN[0]          # Return local_machine if there is local METADATA_CONF.json
     def update_press_sn_dropdown(self, new_values):                                                                     # Update the dropdown values with new_values.
         _ = {inspect.currentframe().f_code.co_name}
         try:
@@ -287,7 +287,7 @@ class Window_4(BaseWindow):
         self.button_clicked = True
         self.confirm_and_proceed()
         self.manager.hide_window(self.__class__.__name__)
-        self.manager.show_window("Window_Supporter")
+        self.manager.show_window("Window_SUPPORTER")
         print("Supporter button clicked!")                                                                              # TODO: Add your logic here...SUPPORTER
     def press_pc_action(self):
         self.button_clicked = True

@@ -1,18 +1,24 @@
+# TODO: 2023-08-23
+#           # LOADING DATA: Still waiting to the data to be loaded.
+#               * Only the constant data can be edit. keep "animation loader" on the EVENT ZONE
+#               * But the GUI stil resposible where it is Enable.
+#           # FEATURES
+#           # BUTTONS
+
 import os
 from datetime import datetime
 import inspect
 import threading
 import time
-from src.scripts.system.config import DMDD, DMD
+from src.scripts.system.config import DMD
 from src.scripts.system.applogger import APPLOGGER
-from src.scripts.gui.windows.win_utility import SHARE_DATA, BaseWindow, logger_explain_template, create_tooltip, register_thread
+from src.scripts.gui.windows.win_utility import SHARE_DATA, BaseWindow, logger_explain_template, register_thread, create_tooltip
 from src.scripts.system.utilities_functions import update_master_json, read_master_json
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 
-ANIMATION_OR_PICTURE_FLAG   = DMDD["ANIMATION_OR_PICTURE_FLAG"]                                                         # Animation or picture
-class Window_Supporter(BaseWindow):
+class Window_SUPPORTER(BaseWindow):
     default_values = {
         "category": "Category A",
         "start_time": "00:00",
@@ -22,30 +28,16 @@ class Window_Supporter(BaseWindow):
     }
     def __init__(self, root, manager, shared_data=None, relation=None, extra_width=0, extra_height=0):
         super().__init__(root, manager, shared_data, relation, extra_width, extra_height, adjust_size=True)
-        self.T = "Window_Supporter"
+        self.T = "Window_SUPPORTER"
         self.title("V12 Daily Report")
         self.extra_width = extra_width
         self.extra_height = extra_height
-        self.shared_data.DICT_PRESS_STATUS_OPTIONS_n_COLORS
-        self.shared_data.DICT_SHIFT_OPTIONS
         self.max_height = int(self.winfo_screenheight() * 0.8)                                                          # Set maximum height and width based on the screen dimensions
         self.max_width = int(self.winfo_screenwidth() * 0.8)
         self._today = datetime.today().date().isoformat()
         ### RESET WINDOW PARAM ###
         self.initialization_win_supporter()
-        # self.press_history = read_master_json().get("press_history", {}).get("data", [])
-        # self.press_data = read_master_json().get("press_data", {}).get("data", [])
-        # self.frame_max_h = 0
-        # self.frame_max_w = 0
-        # self.create_frame_0()
-        # self.load_media()
-        # self.start_loading_animation()
-        # if ANIMATION_OR_PICTURE_FLAG:
-        #     self.animate_loading()
-        # self.create_top_constant_data_frame()
-        # self.rows = []
-        # self.setup_ui()
-        ###########################
+        ################################################################################################################
     def initialization_win_supporter(self):
         self.press_history = read_master_json().get("press_history", {}).get("data", [])
         self.press_data = read_master_json().get("press_data", {}).get("data", [])
@@ -54,7 +46,7 @@ class Window_Supporter(BaseWindow):
         self.create_frame_0()
         self.load_media()
         self.start_loading_animation()
-        if ANIMATION_OR_PICTURE_FLAG:
+        if SHARE_DATA.METADATA.get("ANIMATION_OR_PICTURE_FLAG", DMD.ANIMATION_OR_PICTURE_FLAG):
             self.animate_loading()
         self.create_top_constant_data_frame()
         self.rows = []
@@ -73,7 +65,7 @@ class Window_Supporter(BaseWindow):
             print(f"CHEKC - Start Date: {self.shared_data.START_TIME}, Start Time: {self.shared_data.START_TIME}")
             print(f"CHEKC - End Date: {self.shared_data.END_DATE}, End Time: {self.shared_data.END_TIME}")
             time.sleep(1)
-        print(self.shared_data.DICT_PRESS_STATUS_OPTIONS_n_COLORS)
+        print(self.shared_data.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"])
         print("DONE - background_tasks_window_5")
     def create_frame_0(self):
         self.f0 = tk.Frame(self)
@@ -81,7 +73,7 @@ class Window_Supporter(BaseWindow):
     def load_media(self):
         animation_resize = [400, 80]
         self.animate_flag = True                                                                                        # Logic to stop the loop
-        if ANIMATION_OR_PICTURE_FLAG:
+        if SHARE_DATA.METADATA.get("ANIMATION_OR_PICTURE_FLAG", DMD.ANIMATION_OR_PICTURE_FLAG):
             self.loading_frame_index = 0
             self.loading_frames = []                                                                                    # List to hold each frame
             frames_folder = os.path.join('src', 'media', 'loading_frames')
@@ -96,7 +88,7 @@ class Window_Supporter(BaseWindow):
             gif_image_resized = gif_image.resize((animation_resize[0], animation_resize[1]), Image.ANTIALIAS)           # Resize the gif
             self.loading_gif = ImageTk.PhotoImage(gif_image_resized)                                                    # Convert the resized gif to a PhotoImage for use in Tkinter
     def start_loading_animation(self):
-        if ANIMATION_OR_PICTURE_FLAG:
+        if SHARE_DATA.METADATA.get("ANIMATION_OR_PICTURE_FLAG", DMD.ANIMATION_OR_PICTURE_FLAG):
             self.loading_label = tk.Label(self.f0, image=self.loading_frames[self.loading_frame_index])                 # Create the label to display the frame
             self.loading_label.pack()
         else:
@@ -133,7 +125,7 @@ class Window_Supporter(BaseWindow):
         self.press_status_var = tk.StringVar()
         self.press_status_var.set(self.press_history[-1]['machine_state'] if self.press_history else "Printing")
         self.press_status_var.trace_add("write", self.trace_add_callback)                                               # "Press Status" - Tracer to press_status_var It's quite similar to <# self.press_status_combo.bind("<<ComboboxSelected>>", self.action_for_press_status_var) # Bind the selection event>
-        self.press_status_combo = ttk.Combobox(self.top_constant_data_frame, textvariable=self.press_status_var, values=[status[0] for status in self.shared_data.DICT_PRESS_STATUS_OPTIONS_n_COLORS], state='readonly')
+        self.press_status_combo = ttk.Combobox(self.top_constant_data_frame, textvariable=self.press_status_var, values=[status[0] for status in self.shared_data.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"]], state='readonly')
         self.press_status_combo.grid(row=1, column=0, sticky="w")
         self.last_press_status_value = self.press_status_var.get()
         ################################################################################################################ Add a gap and vertical separator
@@ -144,9 +136,9 @@ class Window_Supporter(BaseWindow):
         ### 2. Shifts widget
         self.shift_label = tk.Label(self.top_constant_data_frame, text="Shift:")                                        # "Shifts" - Label
         self.shift_label.grid(row=0, column=2, sticky="w")                                                              # "Shifts" - Label location
-        self.shift_vars = [tk.BooleanVar() for _ in self.shared_data.DICT_SHIFT_OPTIONS]                                # Use BooleanVar for each checkbutton
+        self.shift_vars = [tk.BooleanVar() for _ in self.shared_data.METADATA["DICT_SHIFT_OPTIONS"]]                                # Use BooleanVar for each checkbutton
         self.last_shift_var = self.press_history[-1]['shift'] if self.press_history else ["Morning"]
-        for i, shift in enumerate(self.shared_data.DICT_SHIFT_OPTIONS):
+        for i, shift in enumerate(self.shared_data.METADATA["DICT_SHIFT_OPTIONS"]):
             self.shift_checkbutton = tk.Checkbutton(self.top_constant_data_frame, text=shift, variable=self.shift_vars[i])
             self.shift_checkbutton.grid(row=1, column=i + 2, sticky="w")
             self.shift_vars[i].set(1) if shift in self.last_shift_var else self.shift_vars[i].set(0)
@@ -166,8 +158,8 @@ class Window_Supporter(BaseWindow):
             self.function_list_for_StringVar_objects[name](name, mode, index)
     def action_for_press_status_var(self, name=None, mode=None, index=None):
         self.last_press_status_value = self.press_status_var.get()
-        self.press_status_combo.config(foreground=next((item[2] for item in self.shared_data.DICT_PRESS_STATUS_OPTIONS_n_COLORS if item[0] == self.last_press_status_value), "black"))
-        self.last_shift_var = [shift_option for i, shift_option in enumerate(self.shared_data.DICT_SHIFT_OPTIONS) if self.shift_vars[i].get()]  # Collect selected shifts
+        self.press_status_combo.config(foreground=next((item[2] for item in self.shared_data.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"] if item[0] == self.last_press_status_value), "black"))
+        self.last_shift_var = [shift_option for i, shift_option in enumerate(self.shared_data.METADATA["DICT_SHIFT_OPTIONS"]) if self.shift_vars[i].get()]  # Collect selected shifts
         threading.Thread(target=self.base_widgets, daemon=True).start()
         self.tmp_combo.set(1)
         self.log_action(f"Action for {name} # {mode}, {index}")
@@ -186,7 +178,7 @@ class Window_Supporter(BaseWindow):
                                     })
         update_master_json(file_name="press_history", data=self.press_history)                                          # threading.Thread(target=update_master_json, args=("press_history", self.press_history), daemon=True).start()
     def trace_shift_callback(self, *args):
-        self.last_shift_var = [shift_option for k, shift_option in enumerate(self.shared_data.DICT_SHIFT_OPTIONS) if self.shift_vars[k].get()]  # Collect selected shifts
+        self.last_shift_var = [shift_option for k, shift_option in enumerate(self.shared_data.METADATA["DICT_SHIFT_OPTIONS"]) if self.shift_vars[k].get()]  # Collect selected shifts
         item = next((x for x in self.press_history if x['date'] == self._today), None)                                  # Update press_history with the selected shifts
         if item:
             item['machine_state'] = self.last_press_status_value
