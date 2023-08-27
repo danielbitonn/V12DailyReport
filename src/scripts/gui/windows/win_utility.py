@@ -25,6 +25,12 @@ PAUSE_ALL_THREADS_EVENT = threading.Event()                                     
 PAUSE_CONDITION = threading.Condition()                                                                                 # TODO: USE or DROP
 def logger_explain_template(func=None, err=None):
     return f'The <{func}> has been failed! ### Error: <{err}> ### {sys.exc_info()[0]} >>> {sys.exc_info()[1]} >>> {traceback.extract_tb(list(sys.exc_info())[2])} ###'
+def daniel(_val=None, _name=None, level=1):
+    """level [0 == the current func, 1 == the previous func (default), 2 == the previous previous func, ...., -1 == the root func]"""
+    p = f'{_name}:{_val} # File:{inspect.getouterframes(inspect.currentframe())[level].filename} # Line:{inspect.getouterframes(inspect.currentframe())[level].lineno}'
+    print("############################################################################################################")
+    print(p)
+    return p
 def colors_dict_to_tuples(color_dict, color_name_mapping):
     result = []
     for status, color_code in color_dict.items():
@@ -47,37 +53,30 @@ def check_queue():
         SHARE_DATA.TASK_RESULT[origin] = res
         print(SHARE_DATA.TASK_RESULT[origin])
     SHARE_DATA.ROOT.after(SHARE_DATA.CHECK_QUEUE_FREQ, check_queue)                                                     # Check the queue again after 100ms
+
 def register_thread(thread):
-    outer_frame   = inspect.getouterframes(inspect.currentframe())
-    creation_file = outer_frame[1].filename
-    creation_line = outer_frame[1].lineno
-    print(f'{thread} # {creation_file} # {creation_line}')
+    daniel(_val=thread, _name="thread", level=2)
     with SHARE_DATA.THREADS_LIST_LOCK:
         SHARE_DATA.THREADS_LIST.append(thread)
-        SHARE_DATA.THREADS_DICT[thread.name] = [thread, f'{thread} # {creation_file} # {creation_line}']
-        SHARE_DATA.THREADS_LIST_n_LOCATIONS[thread.name] = f'{thread} # {creation_file} # {creation_line}'
+        SHARE_DATA.THREADS_DICT[thread.name] = TRS(thread)                                                              # TRS object for the thread and store it in THREADS_DICT
+        daniel(_val=SHARE_DATA.THREADS_DICT[thread.name].__dict__, _name="SHARE_DATA.THREADS_DICT[thread.name]", level=0)
 def handle_thread_completion(thread, st):                                                                               # Custom logic for handling thread completion
     if thread.name=="azure_initialization_thread":                                                                      # Updating From Azure Data
         # TODO: verify if the Azure connection Succeed or we are locally >>>> If Locally treat the SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)
-        print("-PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE-")
-        print(SHARE_DATA.METADATA["presses"])
-        print(SHARE_DATA.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"])
-        print(SHARE_DATA.METADATA["DICT_SHIFT_OPTIONS"])
-        time.sleep(3)
-        print("-PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE-")
+
+        daniel(_val=SHARE_DATA.METADATA, _name="SHARE_DATA.METADATA", level=2)
+
         SHARE_DATA.PRESS_SN.extend(list(SHARE_DATA.METADATA["presses"]))
         SHARE_DATA.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"] = colors_dict_to_tuples(color_dict=SHARE_DATA.METADATA["press_status_colors"], color_name_mapping=SHARE_DATA.METADATA["color_name_mapping"])
         SHARE_DATA.METADATA["DICT_SHIFT_OPTIONS"] = tuple(SHARE_DATA.METADATA["shift_options"].keys())
-        # SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)  # updating dropdown list when the thread is done
         while "Window_4" not in SHARE_DATA.MANAGER.windows:
             time.sleep(0.5)
         SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)                            # updating dropdown list when the thread is done
 
-        # SHARE_DATA.MANAGER.register_window(SHARE_DATA.WINDOWS_CLASSES["win_supporter"], shared_data=SHARE_DATA, extra_width=1, extra_height=1)  # passing the shared data object and extra width&height
+
         print("-PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE-")
         print(SHARE_DATA.AZURE_STORAGE)
         print(SHARE_DATA.METADATA["presses"].get(SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"], False))
-        time.sleep(3)
 
         if SHARE_DATA.METADATA["LOCAL_METADATA_FLAG"]:
             try:
@@ -85,6 +84,8 @@ def handle_thread_completion(thread, st):                                       
             except Exception as e:
                 # TODO USING OPEN JSON FUNC FROM OLDER VERSION - Remember to update (SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN))!
                 APPLOGGER.error(logger_explain_template(func={inspect.currentframe().f_code.co_name}, err=e))
+        SHARE_DATA.THREADS_DICT[thread.name].tr_duration_func()
+        daniel(SHARE_DATA.THREADS_DICT[thread.name].tr_duration, "SHARE_DATA.THREADS_DICT[thread.name].tr_duration")
     elif thread.name=="background_tasks_window_5":
         try:
             SHARE_DATA.MANAGER.windows["Window_SUPPORTER"].stop_loading_animation()
@@ -100,12 +101,18 @@ def background_thread_checker():
     st = time.time()
     while True:
         with SHARE_DATA.THREADS_LIST_LOCK:
-            for thread in SHARE_DATA.THREADS_LIST:
-                if not thread.is_alive():
-                    handle_thread_completion(thread, st)                                                                # Handle thread completion (e.g., fetch results, perform cleanup)
-                    SHARE_DATA.THREADS_LIST.remove(thread)
-                    SHARE_DATA.THREADS_DICT.pop(thread.name, None)
-                    APPLOGGER.debug(f"Threads <{SHARE_DATA.THREADS_LIST}> Running # <{thread}> thread DONE!")
+            # for thread in SHARE_DATA.THREADS_LIST:
+            # if not thread.is_alive():
+            #     handle_thread_completion(thread, st)  # Handle thread completion (e.g., fetch results, perform cleanup)
+            #     SHARE_DATA.THREADS_LIST.remove(thread)
+            #     SHARE_DATA.THREADS_DICT.pop(thread.name, None)
+            #     APPLOGGER.debug(f"Threads <{SHARE_DATA.THREADS_LIST}> Running # <{thread}> thread DONE!")
+            for thread in list(SHARE_DATA.THREADS_DICT.values()):
+                if not thread.tr.is_alive():
+                    handle_thread_completion(thread.tr, st)                                                                # Handle thread completion (e.g., fetch results, perform cleanup)
+                    SHARE_DATA.THREADS_LIST.remove(thread.tr)
+                    SHARE_DATA.THREADS_DICT.pop(thread.tr_name, None)
+                    APPLOGGER.debug(f"Threads <{list(SHARE_DATA.THREADS_DICT.values())}> Running # <{thread.tr}> thread DONE!")
         time.sleep(1)
 ###################################
 # PREV  SharedData LOCATION
@@ -177,6 +184,7 @@ class WindowManager:                                                            
         window = window_class(self.root, self, shared_data, relation, extra_width, extra_height)
         window.withdraw()
         name = window.T
+        daniel(_val=name, _name="window", level=-2)
         self.windows[name] = window
         button = window_class.create_activation_button(self.root, lambda: self.show_window(name))                       # Create and pack the activation button for this window
         button.pack()
@@ -185,7 +193,7 @@ class WindowManager:                                                            
         if name != "root_window":
             self.windows[name].show()
             self.windows[name].adjust_size(self.windows[name].extra_width, self.windows[name].extra_height)             # Adjust the window size
-            self.root.withdraw()
+            # self.root.withdraw()                                                                                      # For DEV MODE USE - which means the root isn't disappear
         else:
             self.root.deiconify()
             self.root.update_idletasks()
@@ -267,6 +275,17 @@ class BaseWindow(tk.Toplevel):                                                  
         self.deiconify()
     def hide(self):
         self.withdraw()
+class TRS:
+    def __init__(self, tr):
+        self.tr             = tr
+        self.tr_name        = tr.name
+        self.tr_st          = time.time()
+        self.tr_start_loc   = daniel(_val=self.tr, _name=self.tr_name)
+        self.tr_deamon      = self.tr.ident
+        self.tr_lock        = threading.Lock()
+    def tr_duration_func(self):
+        self.tr_duration = time.time() - self.tr_st
+        self.tr_end_loc  = daniel(_val=self.tr, _name=self.tr_name)
 class SharedData:
     def __init__(self):
         self.some_attribute = 0
@@ -285,7 +304,7 @@ class SharedData:
         self.TASK_RESULT = {}
         self.THREADS_LIST = []
         self.THREADS_DICT = {}
-        self.THREADS_LIST_n_LOCATIONS = {}
+        # self.THREADS_LIST_n_LOCATIONS = {}
         self.THREADS_LIST_LOCK = threading.Lock()
         ### runtime variables ###
         self.METADATA = copy.deepcopy(DMD.LOCAL_METADATA)

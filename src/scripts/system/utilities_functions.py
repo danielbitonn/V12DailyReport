@@ -4,6 +4,7 @@
 #
 ########################################################################################################################
 import datetime
+import inspect
 import json
 import os
 import subprocess
@@ -24,6 +25,12 @@ ARGS_INPUT_JSON_DEFAULT     = dict(press_sn=ARGS_INPUT_PRESS_SN_DEFAULT, mode=",
 FATHER_PATH                 = 'sa_output'
 ARGS_INPUT_JSON_FILE        = f'{FATHER_PATH}\\args_for_db_sa.json'
 PAUSE01                     = 1
+def daniel(_val=None, _name=None, level=1):
+    """level [0 == the current func, 1 == the previous func (default), 2 == the previous previous func, ...., -1 == the root func]"""
+    p = f'{_name}:{_val} # File:{inspect.getouterframes(inspect.currentframe())[level].filename} # Line:{inspect.getouterframes(inspect.currentframe())[level].lineno}'
+    print("############################################################################################################")
+    print(p)
+    return p
 def recognize_data_type(data):
     if isinstance(data, dict):
         return "json"

@@ -125,10 +125,10 @@ class Window_4(BaseWindow):
         self.set_start_button = tk.Button(self.start_frame, text="Click to set Start Date & Time", command=self.set_start, font=("Arial", 10, "bold"))
         self.set_start_button.pack(anchor="n")
         self.start_date_var = tk.StringVar(value=self.get_current_date())
-        self.start_date_entry = tk.Entry(self.start_frame, textvariable=self.start_date_var, justify='center', width=30)
+        self.start_date_entry = tk.Entry(self.start_frame, textvariable=self.start_date_var, justify='center', width=30, state='readonly')
         self.start_date_entry.pack(anchor="n", pady=5)
-        self.start_time_var = tk.StringVar(value="00:01")
-        self.start_time_entry = tk.Entry(self.start_frame, textvariable=self.start_time_var, justify='center', width=30)
+        self.start_time_var = tk.StringVar(value="00:01:00")
+        self.start_time_entry = tk.Entry(self.start_frame, textvariable=self.start_time_var, justify='center', width=30, state='readonly')
         self.start_time_entry.pack(anchor="n")
         ### Right side: End section ###
         self.end_frame = tk.Frame(self.right_frame)
@@ -136,10 +136,10 @@ class Window_4(BaseWindow):
         self.set_end_button = tk.Button(self.end_frame, text="Click to set End Date&Time", command=self.set_end, font=("Arial", 10, "bold"))
         self.set_end_button.pack(anchor="n")
         self.end_date_var = tk.StringVar(value=self.get_current_date())
-        self.end_date_entry = tk.Entry(self.end_frame, textvariable=self.end_date_var, justify='center',  width=30)
+        self.end_date_entry = tk.Entry(self.end_frame, textvariable=self.end_date_var, justify='center',  width=30, state='readonly')
         self.end_date_entry.pack(anchor="n", pady=5)
         self.end_time_var = tk.StringVar(value=self.get_current_time())
-        self.end_time_entry = tk.Entry(self.end_frame, textvariable=self.end_time_var, justify='center',  width=30)
+        self.end_time_entry = tk.Entry(self.end_frame, textvariable=self.end_time_var, justify='center',  width=30, state='readonly')
         self.end_time_entry.pack(anchor="n")
         APPLOGGER.info(f'The Frame <{inspect.currentframe().f_code.co_name}> has been created.')
     def create_frame_3(self):                                                                                           # Frame 3 (F3): "confirm"
@@ -187,6 +187,8 @@ class Window_4(BaseWindow):
     def dev_checkbox_changed(self):
         if self.dev_var.get():
             self.initialize_data_from_external()                                                                        # TODO: Placeholder function
+        else:
+            self.root.withdraw()
     def initialize_data_from_external(self):
         APPLOGGER.info(f'The <{inspect.currentframe().f_code.co_name}> has been activated!')                            # TODO: Placeholder values
     def get_press_sn_values(self):
@@ -203,11 +205,12 @@ class Window_4(BaseWindow):
             self.press_sn_dropdown["menu"].delete(0, "end")                                                             # Clear the current menu entries
             self.press_sn_var.set(self.press_sn_default_value if self.press_sn_default_value in new_values else new_values[0]) # Update the variable holding the current value
             for value in new_values:                                                                                    # Add new menu entries
-                self.press_sn_dropdown["menu"].add_command(label=value, command=tk._setit(self.press_sn_var, value))
+                self.press_sn_dropdown["menu"].add_command(label=value, command=tk._setit(self.press_sn_var, value))    # When the menu entry is selected by the user, this command is executed. tk._setit is a Tkinter utility function that returns a function. When the returned function is called, it sets the associated variable (self.press_sn_var in this case) to the provided value (value).
             self.stop_loading_animation()
             self.return_button.pack(side="left")
             self.reset_button.pack(side="left", padx=10)
             self.dev_checkbox.pack(anchor="ne")
+            self.press_sn_dropdown.config(width=50)
             self.press_sn_dropdown.pack(anchor="n")
             self.activate_deactivate_pic_images(flag=True)                                                              # Set regular image to the button enabled
             APPLOGGER.info(f'The <{_}> done - list is updated!')
@@ -216,7 +219,7 @@ class Window_4(BaseWindow):
     def get_current_date(self):
         return time.strftime('%Y-%m-%d')
     def get_current_time(self):
-        return time.strftime('%H:%M')
+        return time.strftime('%H:%M:00')
     def coerce_hour(self):
         hour = int(self.hour_spin.get())
         if hour < 0:
@@ -265,6 +268,8 @@ class Window_4(BaseWindow):
         selected_time = f"{self.hour_var.get()}:{self.minute_var.get()}:00"
         self.end_date_var.set(f"{selected_date.strftime('%Y-%m-%d')}")
         self.end_time_var.set(selected_time)
+        self.start_date_var.set(selected_date)
+        self.start_time_var.set("00:01:00")
     def dim_image(self, image):
         enhancer = ImageEnhance.Brightness(image)
         dimmed_image = enhancer.enhance(0.5)                                                                            # Reduce brightness to 50%
@@ -283,11 +288,15 @@ class Window_4(BaseWindow):
         SHARE_DATA.END_TIME = self.end_time_var.get()
         print(f"Start Date: {self.start_date_var.get()}, Start Time: {self.start_time_var.get()}")                      # TODO: Placeholder for functionality that you'd like to add when 'Confirm' is clicked. For now, we'll simply display the values chosen in this window.
         print(f"End Date: {self.end_date_var.get()}, End Time: {self.end_time_var.get()}")                              # TODO: If you want to transition to the next window, add the necessary code here. For demonstration purposes, we'll just close the current window.
+        return True
     def supporter_action(self):
         self.button_clicked = True
-        self.confirm_and_proceed()
-        self.manager.hide_window(self.__class__.__name__)
-        self.manager.show_window("Window_SUPPORTER")
+        if self.confirm_and_proceed():
+            self.manager.hide_window(self.__class__.__name__)
+            self.manager.show_window("Window_SUPPORTER")
+        else:
+            pass
+            # TODO: DATA LOADING ISSUES
         print("Supporter button clicked!")                                                                              # TODO: Add your logic here...SUPPORTER
     def press_pc_action(self):
         self.button_clicked = True

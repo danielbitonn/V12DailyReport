@@ -32,6 +32,12 @@ import tkinter as tk
 ########################################################################################################################
 def logger_explain_template(func=None, err=None):                                                                       # func # _ = {inspect.currentframe().f_code.co_name}
     return f'The <{func}> has been failed! ### Error: <{err}> ### {sys.exc_info()[0]} >>> {sys.exc_info()[1]} >>> {traceback.extract_tb(list(sys.exc_info())[2])} ###'                                                                                         # Sleep for a short duration before checking again
+def daniel(_val=None, _name=None, level=1):
+    """level [0 == the current func, 1 == the previous func (default), 2 == the previous previous func, ...., -1 == the root func]"""
+    p = f'{_name}:{_val} # File:{inspect.getouterframes(inspect.currentframe())[level].filename} # Line:{inspect.getouterframes(inspect.currentframe())[level].lineno}'
+    print("############################################################################################################")
+    print(p)
+    return p
 def root_window_definition(root, extra_width=0, extra_height=0):
     APPLOGGER.info(f'The <{inspect.currentframe().f_code.co_name}> has been activated.')
     root.attributes('-alpha', 1.0)                                                                                      # This will make the root window fully opaque
@@ -42,9 +48,8 @@ def root_window_definition(root, extra_width=0, extra_height=0):
     root.geometry(f"{width}x{height}")                                                                                  # Set the new size
     root.withdraw()
 def background_SUPPORTER(manager, pre_req_tr):
-    pre_req_tr.join()
-    while SHARE_DATA.METADATA["DICT_SHIFT_OPTIONS"] is None or SHARE_DATA.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"] is None:
-        time.sleep(1)
+    pre_req_tr.tr.join()
+    daniel(pre_req_tr.tr_name, "pre_req_tr.tr_name")
     manager.register_window(Window_SUPPORTER, shared_data=SHARE_DATA, extra_width=1, extra_height=1)                    # passing the shared data object and extra width&height
 def background_PRESS(manager):
     for x in range(100):
@@ -61,7 +66,7 @@ def MAIN_GUI_HANDLING_SYS():
     ### Start the RECURRING check ###
     root.after(SHARE_DATA.CHECK_QUEUE_FREQ, check_queue)
     # # TODO: background SUPPORTER GUI building and withdraw()
-    tr_background_SUPPORTER = threading.Thread(name="background_SUPPORTER", target=background_SUPPORTER, args=(manager, SHARE_DATA.THREADS_DICT["azure_initialization_thread"][0]))
+    tr_background_SUPPORTER = threading.Thread(name="background_SUPPORTER", target=background_SUPPORTER, args=(manager, SHARE_DATA.THREADS_DICT["azure_initialization_thread"]), daemon=True)
     tr_background_SUPPORTER.start()
     register_thread(tr_background_SUPPORTER)
     # TODO: background Press-PC GUI building and withdraw()
