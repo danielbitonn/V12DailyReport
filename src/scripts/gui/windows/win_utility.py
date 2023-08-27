@@ -1,24 +1,42 @@
+# TODO: 2023-08-23
+#       POP-UP Messagebox with basic functionalities for use with all windows as an error pop-up.                       NEXT
+#       Threads handler Re-orgenized                                                                                    NEXT
+########################################################################################################################
 from src.scripts.system.applogger import APPLOGGER
+from src.scripts.system.config import DMDD, DMD
 import threading
 import queue
 import time
 import inspect
 import sys
 import traceback
+import copy
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter.ttk import Progressbar
-from src.scripts.system.config import DMDD, DMD, azure_initialization, colors_dict_to_tuples
+
 from tkinter import messagebox                                                                                          # messagebox.showerror(title="Error", message=f'Processing step {i}')
 # from tkcalendar import DateEntry, Calendar
 # import datetime
 # import os
 # import json
 
-PAUSE_ALL_THREADS_EVENT = threading.Event()
-PAUSE_CONDITION = threading.Condition()
+PAUSE_ALL_THREADS_EVENT = threading.Event()                                                                             # TODO: USE or DROP
+PAUSE_CONDITION = threading.Condition()                                                                                 # TODO: USE or DROP
 def logger_explain_template(func=None, err=None):
     return f'The <{func}> has been failed! ### Error: <{err}> ### {sys.exc_info()[0]} >>> {sys.exc_info()[1]} >>> {traceback.extract_tb(list(sys.exc_info())[2])} ###'
+def daniel(_val=None, _name=None, level=1):
+    """level [0 == the current func, 1 == the previous func (default), 2 == the previous previous func, ...., -1 == the root func]"""
+    p = f'{_name}:{_val} # File:{inspect.getouterframes(inspect.currentframe())[level].filename} # Line:{inspect.getouterframes(inspect.currentframe())[level].lineno}'
+    print("############################################################################################################")
+    print(p)
+    return p
+def colors_dict_to_tuples(color_dict, color_name_mapping):
+    result = []
+    for status, color_code in color_dict.items():
+        color_name = color_name_mapping.get(color_code, "black")
+        result.append((status, color_name, color_code))
+    return result
 def check_queue():
     while not SHARE_DATA.TASK_QUEUE.empty():
         # if SHARE_DATA.PAUSE_ALL_THREADS_EVENT.is_set():
@@ -35,33 +53,42 @@ def check_queue():
         SHARE_DATA.TASK_RESULT[origin] = res
         print(SHARE_DATA.TASK_RESULT[origin])
     SHARE_DATA.ROOT.after(SHARE_DATA.CHECK_QUEUE_FREQ, check_queue)                                                     # Check the queue again after 100ms
+
 def register_thread(thread):
-    outer_frame   = inspect.getouterframes(inspect.currentframe())
-    creation_file = outer_frame[1].filename
-    creation_line = outer_frame[1].lineno
-    print(f'{thread} # {creation_file} # {creation_line}')
+    daniel(_val=thread, _name="thread", level=2)
     with SHARE_DATA.THREADS_LIST_LOCK:
         SHARE_DATA.THREADS_LIST.append(thread)
-        SHARE_DATA.THREADS_LIST_n_LOCATIONS[thread.name] = f'{thread} # {creation_file} # {creation_line}'
+        SHARE_DATA.THREADS_DICT[thread.name] = TRS(thread)                                                              # TRS object for the thread and store it in THREADS_DICT
+        daniel(_val=SHARE_DATA.THREADS_DICT[thread.name].__dict__, _name="SHARE_DATA.THREADS_DICT[thread.name]", level=0)
 def handle_thread_completion(thread, st):                                                                               # Custom logic for handling thread completion
-    if thread.name=="tr_root_window_definition":
-        pass
-    elif thread.name=="azure_initialization_thread":                                                                    # Updating From Azure Data
+    if thread.name=="azure_initialization_thread":                                                                      # Updating From Azure Data
         # TODO: verify if the Azure connection Succeed or we are locally >>>> If Locally treat the SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)
-        SHARE_DATA.PRESS_SN.extend(list(SHARE_DATA.CONFIG["conf.json"]["presses"]))
-        SHARE_DATA.DICT_PRESS_STATUS_OPTIONS_n_COLORS = colors_dict_to_tuples(SHARE_DATA.CONFIG["conf.json"]["design"]["press_status_colors"])
-        SHARE_DATA.DICT_SHIFT_OPTIONS = tuple(SHARE_DATA.CONFIG["conf.json"]["design"]["shift_options"].keys())
+
+        daniel(_val=SHARE_DATA.METADATA, _name="SHARE_DATA.METADATA", level=2)
+
+        SHARE_DATA.PRESS_SN.extend(list(SHARE_DATA.METADATA["presses"]))
+        SHARE_DATA.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"] = colors_dict_to_tuples(color_dict=SHARE_DATA.METADATA["press_status_colors"], color_name_mapping=SHARE_DATA.METADATA["color_name_mapping"])
+        SHARE_DATA.METADATA["DICT_SHIFT_OPTIONS"] = tuple(SHARE_DATA.METADATA["shift_options"].keys())
+        while "Window_4" not in SHARE_DATA.MANAGER.windows:
+            time.sleep(0.5)
         SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)                            # updating dropdown list when the thread is done
-        # SHARE_DATA.MANAGER.register_window(SHARE_DATA.WINDOWS_CLASSES["win_supporter"], shared_data=SHARE_DATA, extra_width=1, extra_height=1)  # passing the shared data object and extra width&height
-        if DMDD["METADATA_FLAG"]:
+
+
+        print("-PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE-")
+        print(SHARE_DATA.AZURE_STORAGE)
+        print(SHARE_DATA.METADATA["presses"].get(SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"], False))
+
+        if SHARE_DATA.METADATA["LOCAL_METADATA_FLAG"]:
             try:
-                SHARE_DATA.PRESS_LIST_OF_BLOBS = SHARE_DATA.METADATA[DMDD["PRESS_DICT_SN"]]
+                print(SHARE_DATA.METADATA["presses"].get(SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"], False))
             except Exception as e:
                 # TODO USING OPEN JSON FUNC FROM OLDER VERSION - Remember to update (SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN))!
                 APPLOGGER.error(logger_explain_template(func={inspect.currentframe().f_code.co_name}, err=e))
+        SHARE_DATA.THREADS_DICT[thread.name].tr_duration_func()
+        daniel(SHARE_DATA.THREADS_DICT[thread.name].tr_duration, "SHARE_DATA.THREADS_DICT[thread.name].tr_duration")
     elif thread.name=="background_tasks_window_5":
         try:
-            SHARE_DATA.MANAGER.windows["Window_Supporter"].stop_loading_animation()
+            SHARE_DATA.MANAGER.windows["Window_SUPPORTER"].stop_loading_animation()
         except Exception as e:
             # TODO: Error handling system regarding missing rowData!
             APPLOGGER.error(logger_explain_template(func={inspect.currentframe().f_code.co_name}, err=e))
@@ -74,50 +101,22 @@ def background_thread_checker():
     st = time.time()
     while True:
         with SHARE_DATA.THREADS_LIST_LOCK:
-            print(SHARE_DATA.THREADS_LIST)
-            APPLOGGER.debug(f"Threads <{SHARE_DATA.THREADS_LIST}> are running.")
-            for thread in SHARE_DATA.THREADS_LIST:
-                if not thread.is_alive():
-                    handle_thread_completion(thread, st)                                                                # Handle thread completion (e.g., fetch results, perform cleanup)
-                    SHARE_DATA.THREADS_LIST.remove(thread)
+            # for thread in SHARE_DATA.THREADS_LIST:
+            # if not thread.is_alive():
+            #     handle_thread_completion(thread, st)  # Handle thread completion (e.g., fetch results, perform cleanup)
+            #     SHARE_DATA.THREADS_LIST.remove(thread)
+            #     SHARE_DATA.THREADS_DICT.pop(thread.name, None)
+            #     APPLOGGER.debug(f"Threads <{SHARE_DATA.THREADS_LIST}> Running # <{thread}> thread DONE!")
+            for thread in list(SHARE_DATA.THREADS_DICT.values()):
+                if not thread.tr.is_alive():
+                    handle_thread_completion(thread.tr, st)                                                                # Handle thread completion (e.g., fetch results, perform cleanup)
+                    SHARE_DATA.THREADS_LIST.remove(thread.tr)
+                    SHARE_DATA.THREADS_DICT.pop(thread.tr_name, None)
+                    APPLOGGER.debug(f"Threads <{list(SHARE_DATA.THREADS_DICT.values())}> Running # <{thread.tr}> thread DONE!")
         time.sleep(1)
-class SharedData:
-    def __init__(self):
-        self.some_attribute = 0
-        ### power-up variables ###
-        self.TASK_QUEUE = queue.Queue()
-        self.PRESS_SN = ["Choose Press Serial Number"]
-        self.PRESS = None
-        self.ROOT  = None
-        self.MANAGER = None
-        self.MAINAGENT = None
-        self.AZURECONNECT = None
-        self.METADATA = None
-        self.CONFIG = None                                                                                              # This is the whole configuration azure SHARE_DATA.CONFIG["conf.json"]["presses"] or SHARE_DATA.CONFIG[""]["presses"]!
-        self.CHECK_QUEUE_FREQ = DMDD["CHECK_QUEUE_FREQ"]
-        self.TASK_RESULT = {}
-        self.THREADS_LIST = []
-        self.THREADS_LIST_n_LOCATIONS = {}
-        self.THREADS_LIST_LOCK = threading.Lock()
-        ### runtime variables ###
-        self.PAUSE_ALL_THREADS_EVENT = threading.Event()
-        self.WINDOWS_CLASSES = {}
-        self.PRESS_LIST_OF_BLOBS = None
-        self.DICT_PRESS_STATUS_OPTIONS_n_COLORS = None
-        self.DICT_SHIFT_OPTIONS = None
-        self.START_DATE = None
-        self.START_TIME = None
-        self.END_DATE = None
-        self.END_TIME = None
-        self.ERROR_MESSAGE_FLAG = ""
-    def update_attribute(self, value):
-        with self.THREADS_LIST_LOCK:
-            self.some_attribute = value
-    def get_attribute(self):
-        with self.THREADS_LIST_LOCK:
-            return self.some_attribute
-
-SHARE_DATA = SharedData()
+###################################
+# PREV  SharedData LOCATION
+##################################
 class ToolTip(object):
     def __init__(self, widget):
         self.widget = widget
@@ -185,7 +184,7 @@ class WindowManager:                                                            
         window = window_class(self.root, self, shared_data, relation, extra_width, extra_height)
         window.withdraw()
         name = window.T
-        print(name)
+        daniel(_val=name, _name="window", level=-2)
         self.windows[name] = window
         button = window_class.create_activation_button(self.root, lambda: self.show_window(name))                       # Create and pack the activation button for this window
         button.pack()
@@ -193,23 +192,19 @@ class WindowManager:                                                            
     def show_window(self, name):
         if name != "root_window":
             self.windows[name].show()
-            # self.windows[name].update_idletasks()                                                                     # Update layout calculations
             self.windows[name].adjust_size(self.windows[name].extra_width, self.windows[name].extra_height)             # Adjust the window size
-            self.root.withdraw()
+            # self.root.withdraw()                                                                                      # For DEV MODE USE - which means the root isn't disappear
         else:
             self.root.deiconify()
             self.root.update_idletasks()
         self.windows_history_update(current_window_name=name)
         APPLOGGER.info(f'Window <{name}> has been show-up.')
     def windows_history_update(self, current_window_name):
-        print(f"Last: {self.last_window}")
-        print(f"Current: {current_window_name}")
+        _prev = self.last_window
         if current_window_name != self.window_history[-1]:
             self.window_history.append(current_window_name)
         self.last_window = current_window_name
-        print(f"Last: {self.last_window}")
-        print(f"Windows History: {self.window_history}")
-        APPLOGGER.info(f'Windows History: <{self.window_history}>')
+        APPLOGGER.info(f'Updated windows History: <{self.window_history}> # Current Window: <{current_window_name}> # Last Window: <{_prev}>')
     def hide_window(self, name):
         self.windows[name].hide()
     def close_window(self, current_window_name):
@@ -249,7 +244,7 @@ class BaseWindow(tk.Toplevel):                                                  
         self.protocol('WM_DELETE_WINDOW', self.on_close)
         if adjust_size:
             self.adjust_size(extra_width, extra_height)
-        APPLOGGER.info(f'The BaseWindow class has been created.')
+        APPLOGGER.info(f'The BaseWindow class has been created')
     @classmethod
     def create_image_button(cls, root, command, image_path):
         image = Image.open(image_path)
@@ -280,3 +275,54 @@ class BaseWindow(tk.Toplevel):                                                  
         self.deiconify()
     def hide(self):
         self.withdraw()
+class TRS:
+    def __init__(self, tr):
+        self.tr             = tr
+        self.tr_name        = tr.name
+        self.tr_st          = time.time()
+        self.tr_start_loc   = daniel(_val=self.tr, _name=self.tr_name)
+        self.tr_deamon      = self.tr.ident
+        self.tr_lock        = threading.Lock()
+    def tr_duration_func(self):
+        self.tr_duration = time.time() - self.tr_st
+        self.tr_end_loc  = daniel(_val=self.tr, _name=self.tr_name)
+class SharedData:
+    def __init__(self):
+        self.some_attribute = 0
+        ### power-up variables ###
+        self.TASK_QUEUE = queue.Queue()
+        self.PRESS_SN = ["Choose Press Serial Number"]
+        self.PRESS = None
+        self.ROOT  = None
+        self.MANAGER = None
+        self.AZURE_MAINAGENT = None
+        self.AZURE_CONNECTION_FLAG = False
+        self.AZURE_STORAGE = None
+        self.AZURE_METADATA = {}                                                                                        # This is the whole configuration azure SHARE_DATA.CONFIG["RUNTIME_AZURE_CONF_JSON"]["presses"] or SHARE_DATA.CONFIG[""]["presses"]!
+        self.REF_AZURE_METADATA = {}
+        # self.CHECK_QUEUE_FREQ = DMD["CHECK_QUEUE_FREQ"]
+        self.TASK_RESULT = {}
+        self.THREADS_LIST = []
+        self.THREADS_DICT = {}
+        # self.THREADS_LIST_n_LOCATIONS = {}
+        self.THREADS_LIST_LOCK = threading.Lock()
+        ### runtime variables ###
+        self.METADATA = copy.deepcopy(DMD.LOCAL_METADATA)
+        self.CHECK_QUEUE_FREQ = DMDD["LOCAL_METADATA"]["CHECK_QUEUE_FREQ"]
+        self.PAUSE_ALL_THREADS_EVENT = threading.Event()
+        self.WINDOWS_CLASSES = {}
+        self.PRESS_LIST_OF_BLOBS = None
+        self.DICT_PRESS_STATUS_OPTIONS_n_COLORS = None
+        self.DICT_SHIFT_OPTIONS = None
+        self.START_DATE = None
+        self.START_TIME = None
+        self.END_DATE = None
+        self.END_TIME = None
+        self.ERROR_MESSAGE_FLAG = ""
+    def update_attribute(self, atr, value):
+        with self.THREADS_LIST_LOCK:
+            atr = value
+    def get_attribute(self, atr):
+        with self.THREADS_LIST_LOCK:
+            return atr
+SHARE_DATA = SharedData()

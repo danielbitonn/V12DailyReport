@@ -21,7 +21,8 @@ import traceback
 import inspect
 ### EXTERNAL IMPORT ###
 from src.scripts.system.applogger import APPLOGGER
-from src.scripts.system.config import folders_handler, auto_func_delete_old_files
+from src.scripts.system.config import folders_handler, old_logs_deletion_files_automation, azure_initialization
+from src.scripts.gui.windows.win_utility import SHARE_DATA, register_thread, background_thread_checker
 from src.scripts.gui.gui_handling_system import MAIN_GUI_HANDLING_SYS                                                   # from src.scripts.gui.gui_manager import main_gui_start
 ###### WEB GUI
 from src.scripts.gui.web_gui import start_web_server, get_default_browser_windows, terminate_process_by_port, should_shutdown, ACT
@@ -56,7 +57,15 @@ if __name__ == '__main__':
     if not _temp:
         st = time.time()
         threading.Thread(target=files_n_folders, daemon=True).start()
-        threading.Thread(target=auto_func_delete_old_files, daemon=True).start()
+        threading.Thread(target=old_logs_deletion_files_automation, daemon=True).start()
+        ### Start the background checker in a separate thread ###
+        checker_thread = threading.Thread(target=background_thread_checker, daemon=True)
+        checker_thread.start()
+        ### Start azure_initialization subprocess from config.py ###
+        azure_initialization_thread = threading.Thread(name="azure_initialization_thread", target=azure_initialization, args=(APPLOGGER, SHARE_DATA), daemon=True)
+        azure_initialization_thread.start()
+        register_thread(azure_initialization_thread)
+
         if ACT['WEB_GUI_FLAG']:
             try:
                 result = terminate_process_by_port(ACT["PORT"])
@@ -73,8 +82,13 @@ if __name__ == '__main__':
 
             monitor_thread = threading.Thread(target=monitor_browser, args=(driver, should_shutdown), daemon=True)
             monitor_thread.start()
-        ### Main Gui Thread ###
-        MAIN_GUI_HANDLING_SYS()                                                                                          # main_gui_start()
+        ################################################################################################################
+        ################################################## Main GUI ####################################################
+        ################################################################################################################
+        MAIN_GUI_HANDLING_SYS()                                                                                         # main_gui_start()
+        ################################################################################################################
+        ################################################################################################################
+        ################################################################################################################
         if ACT['WEB_GUI_FLAG']:
             requests.post(f'http://127.0.0.1:{ACT["PORT"]}/shutdown_check')                                                 # Shut down the server
             try:
