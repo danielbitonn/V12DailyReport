@@ -3,63 +3,7 @@
         "data_type": "json",
         "data": [
             {
-                "date": "2023-08-19",
-                "machine_state": "MD - Waiting for parts",
-                "shift": [
-                    "Morning",
-                    "Noon"
-                ]
-            },
-            {
-                "date": "2023-08-18",
-                "machine_state": "Printing",
-                "shift": [
-                    "Morning"
-                ]
-            },
-            {
-                "date": "2023-08-17",
-                "machine_state": "Pending customer",
-                "shift": [
-                    "Morning",
-                    "Noon"
-                ]
-            },
-            {
-                "date": "2023-08-14",
-                "machine_state": "Printing with limitation",
-                "shift": [
-                    "Morning"
-                ]
-            },
-            {
-                "date": "2023-08-11",
-                "machine_state": "Printing",
-                "shift": [
-                    "Morning",
-                    "Noon",
-                    "Night"
-                ]
-            },
-            {
-                "date": "2023-07-20",
-                "machine_state": "Printing",
-                "shift": [
-                    "Morning",
-                    "Noon",
-                    "Night"
-                ]
-            },
-            {
-                "date": "2023-08-20",
-                "machine_state": "Proactive shutdown",
-                "shift": [
-                    "Morning",
-                    "Night"
-                ]
-            },
-            {
-                "date": "2023-08-21",
+                "date": "2023-08-27",
                 "machine_state": "Printing",
                 "shift": [
                     "Morning"

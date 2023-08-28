@@ -1,0 +1,772 @@
+{
+  "LOCAL_METADATA": {
+    "LOCAL_METADATA_FLAG": 0,
+    "ANIMATION_OR_PICTURE_FLAG": 1,
+    "CHECK_QUEUE_FREQ": 100,
+    "AZURE_METADATA_VER": "v001",
+    "VERSION": "v117",
+    "METADATA_DATE": "2023-08-22",
+    "PREV_VERSION": "v116",
+    "DFE_VERSION": "8.2.0.137.0",
+    "DFE_VERSION_DATE": "2023-03-01",
+    "PLC_VERSION": "V1.4.58.7",
+    "PLC_VERSION_DATE": "2023-03-01",
+    "SW_VERSION": "16000.0.973- patch.71",
+    "SW_VERSION_DATE": "2023-03-01",
+    "json_ver": "1.1.1",
+    "app_ver": "1.1.1",
+    "daily_report_ver": "v109",
+    "METADATA_FILE_NAME": "sys_db.json",
+    "METADATA_ROOT_PATH": "./output/metadata",
+    "METADATA_PATH": "./output/metadata/sys_db.json",
+    "DT_FORMAT": "%Y-%m-%d",
+    "T_FORMAT": "%H:%M",
+    "DT_YYYY_MM_DD__HH_MM": "%Y-%m-%d__%H:%M",
+    "METADATA_TODAY": "2023-08-28",
+    "ROOT_OUTPUT_PATH": "output",
+    "FILES_FOLDER_PATH": "files",
+    "IMAGES_PATH": "images",
+    "DATA_PATH": "data",
+    "LOG_PATH": "log",
+    "FILES_PATH_FULL": "output\\files",
+    "IMAGES_PATH_FULL": "output\\images",
+    "DATA_PATH_FULL": "output\\data",
+    "LOG_PATH_FULL": "output\\log",
+    "FOLDERS_FULL_PATHS": {
+      "FOLDERS_FULL_PATHS_JSONS": "output\\data\\jsons",
+      "FOLDERS_FULL_PATHS_EXPORTED": "output\\data\\exported"
+    },
+    "folders_arch": {
+      "fa_PushExpDataPathRel": "push_exported_data\\",
+      "fa_PushExpDataPathRelCMD": "push_exported_data_CMD\\",
+      "fa_PullExpDataPathRel": "pull_data\\"
+    },
+    "folders_arch_comb": {
+      "fa_Images_comb": "Images",
+      "fa_comb_logs": "output\\logs",
+      "fa_comb_output_images": "output\\images",
+      "fa_comb_output_files": "output\\files",
+      "fa_comb_push": "data\\push_exported_data",
+      "fa_comb_pull": "data\\pull_imported_data"
+    },
+    "folders_to_upload": {
+      "fa_comb_push": [
+        "data\\push_exported_data",
+        1,
+        1
+      ],
+      "fa_comb_logs": [
+        "output\\logs",
+        1,
+        0
+      ],
+      "fa_comb_output_images": [
+        "output\\images",
+        0,
+        0
+      ],
+      "fa_comb_output_files": [
+        "output\\files",
+        0,
+        0
+      ]
+    },
+    "sa_folders_to_upload": {
+      "sa_fa_comb_logs": "sa_output\\logs",
+      "sa_fa_comb_output_images": "sa_output\\images",
+      "sa_fa_comb_output_files": "sa_output\\files",
+      "sa_fa_comb_data_pull": "sa_output\\data\\pull_imported_data",
+      "sa_fa_comb_data_push": "sa_output\\data\\push_imported_data"
+    },
+    "paths": {
+      "PressEsExporter": "S:\\Press\\PressTools.EsExporter.exe",
+      "exportedData": "C:\\ExportedEsData\\",
+      "exBatPath": "bats\\",
+      "exDataPath": "data\\",
+      "PushExpDataPathRel": "data\\push_exported_data\\",
+      "PushExpDataPathRelCMD": "data\\push_exported_data_CMD",
+      "PullExpDataPathRel": "data\\pull_data\\",
+      "sqldbPath": "sqldb\\",
+      "databaseName": "PressDB.db",
+      "sqldbPath_csv": "sqldb\\db_csv",
+      "pressDBpath": "S:\\Press\\PressDB.db",
+      "exe_comm": "bats\\V12Daily_report_v109.exe",
+      "analysis_data_root_path": "data\\pull_data"
+    },
+    "batsFiles": {
+      "press-bat-exporter": "bats\\GCSGetRecorded.bat"
+    },
+    "freecmd": {
+      "comm": "@echo off && echo V12 && pause"
+    },
+    "LOG_DAYS_TO_DELETE": 1,
+    "LOG_FATAL_ERRORS": [],
+    "DELETED_FILES": [],
+    "LOG_PREFIX": "log__",
+    "LOG_T_FORMAT": "%H-%M",
+    "LOG_YYYY_MM_DD__HH_MM": "%Y-%m-%d__%H-%M",
+    "logApp": {
+      "AppLogName": "AppLogger",
+      "fields": [
+        "asctime",
+        "levelname",
+        "message",
+        "name"
+      ]
+    },
+    "ROOT_README_FILE_NAME": "./output/metadata/README.txt",
+    "AZK": "DefaultEndpointsProtocol=https;AccountName=v12daily;AccountKey=2tBxBHZwM5WNyzPAyozRtsircGCFBAMN2S3TfZGFN923bIlkWAjdn5scM5vV5TkYPFKvukfD/cL5+AStMluGag==;EndpointSuffix=core.windows.net",
+    "LOCAL_MACHINE": "hpcnd1270882",
+    "USER": "biton",
+    "CONF_CONTAINER_NAME": "sysdb",
+    "container_name": "gcsteamcont",
+    "prssSNSeparator": "___SN___",
+    "combineSeperator": "_COMB",
+    "dfSeparator": "_From",
+    "output_json_path": "data\\",
+    "output_json_name": "storage_containers_blobs.json",
+    "users_pc": {
+      "hpcnd1270882": "biton"
+    },
+    "presses": {
+      "b70001001": "70001001",
+      "b70001002": "70001002",
+      "b70001003": "70001003",
+      "b70001004": "70001004",
+      "b70001005": "70001005",
+      "b70001006": "70001006"
+    },
+    "PREVIOUS_PRESS_SN": "bxxxxxxxx",
+    "widget_sizes": {
+      "width": 30,
+      "height": 5
+    },
+    "color_name_mapping": {
+      "#ccffcc": "lightgreen",
+      "#ffe6cc": "lightorange",
+      "#ffffcc": "lightyellow",
+      "#e6ccff": "lightpurple",
+      "#ffcccc": "red",
+      "#999900": "darkyellow",
+      "#87CEFA": "lightskyblue",
+      "#9370DB": "mediumorchid",
+      "#BC0E00": "darkred",
+      "#EBB517": "goldenrod",
+      "#FFD700": "gold",
+      "#90EE90": "lightgreen",
+      "#008000": "green",
+      "#0000FF": "blue",
+      "#20B2AA": "lightseagreen",
+      "#778899": "lightslategray",
+      "#FF8C00": "darkorange",
+      "#FF4500": "orangered",
+      "#2E8B57": "seagreen",
+      "#6B8E23": "olivedrab",
+      "#8B4513": "saddlebrown",
+      "#D2B48C": "tan",
+      "#D8BFD8": "thistle",
+      "#FA8072": "salmon",
+      "#F5DEB3": "wheat",
+      "#C71585": "mediumvioletred"
+    },
+    "indexes": {
+      "press-state-history": "press-state-history*",
+      "restart-history": "restart-history*",
+      "event-history": "*event-history*"
+    },
+    "DICT_PRESS_STATUS_OPTIONS_n_COLORS": [
+      [
+        "Printing",
+        "lightgreen",
+        "#ccffcc"
+      ],
+      [
+        "Printing with limitation",
+        "orange",
+        "#ffe6cc"
+      ],
+      [
+        "Proactive shutdown",
+        "#999900",
+        "#ffffcc"
+      ],
+      [
+        "Pending customer",
+        "purple",
+        "#e6ccff"
+      ],
+      [
+        "MD - Troubleshooting",
+        "red",
+        "#ffcccc"
+      ],
+      [
+        "MD - Waiting for parts",
+        "red",
+        "#ffcccc"
+      ],
+      [
+        "MD - Escalation",
+        "red",
+        "#ffcccc"
+      ]
+    ],
+    "DICT_SHIFT_OPTIONS": [
+      "Morning",
+      "Noon",
+      "Night"
+    ],
+    "shift_options": {
+      "Morning": 1,
+      "Noon": 0,
+      "Night": 0
+    },
+    "topics_menu": {
+      "--Troubleshooting--": [
+        {
+          "topic": "SW issue",
+          "description": "Description for SW issue",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "PQ issue",
+          "description": "Description for PQ issue",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "PQ issue + fix / clean",
+          "description": "Description for PQ issue requiring fix or cleaning",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "PQ issue + Part replace",
+          "description": "Description for PQ issue requiring part replacement",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "PQ issue + Consumable replace",
+          "description": "PQ issue requiring consumable replacement",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "HW issue",
+          "description": "Description for HW issue",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "HW issue + fix / clean",
+          "description": "Description for HW issue requiring fix or cleaning",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "HW issue + Part replace",
+          "description": "Description for HW issue requiring part replacement",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "HW issue + Consumable replace",
+          "description": "HW issue requiring consumable replacement",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "other",
+          "description": "Description for other site reasons",
+          "family": "Other",
+          "family_colormap": "spring"
+        }
+      ],
+      "--Active actions--": [
+        {
+          "topic": "Power up",
+          "description": "Description or notes for Power up",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Part replacement",
+          "description": "Description for Part replacement",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "Scheduled Maintenance",
+          "description": "Description for Scheduled Maintenance",
+          "family": "Maintenance",
+          "family_colormap": "Greens"
+        },
+        {
+          "topic": "Unscheduled Maintenance",
+          "description": "Description for Unscheduled Maintenance",
+          "family": "Maintenance",
+          "family_colormap": "Greens"
+        },
+        {
+          "topic": "Web break",
+          "description": "Description for Unscheduled Maintenance",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "other",
+          "description": "Description for other site reasons",
+          "family": "Other",
+          "family_colormap": "spring"
+        }
+      ],
+      "--Site's reasons--": [
+        {
+          "topic": "Operator duties",
+          "description": "Description for Operator duties",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Pending job",
+          "description": "Description for Pending job",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Pending substrate",
+          "description": "Description for Pending substrate",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Site maintenance",
+          "description": "Description for Site maintenance",
+          "family": "Maintenance",
+          "family_colormap": "Greens"
+        },
+        {
+          "topic": "other",
+          "description": "Description for other site reasons",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Select",
+          "description": "",
+          "family": "Other",
+          "family_colormap": "spring"
+        }
+      ]
+    },
+    "state_colors": {
+      "Power-Up": "#87CEFA",
+      "Init": "#9370DB",
+      "Off": "#BC0E00",
+      "Service": "#EBB517",
+      "Standby": "#FFD700",
+      "GetReady": "#90EE90",
+      "Ready": "#008000",
+      "Print": "#0000FF",
+      "Pre / Post Print": "#20B2AA",
+      "Shutdown": "#778899",
+      "Restart": "#FF8C00"
+    },
+    "press_status_colors": {
+      "Printing": "#ccffcc",
+      "Printing with limitation": "#ffe6cc",
+      "Proactive shutdown": "#ffffcc",
+      "Pending customer": "#e6ccff",
+      "MD - Troubleshooting": "#ffcccc",
+      "MD - Waiting for parts": "#ffcccc",
+      "MD - Escalation": "#ffcccc"
+    }
+  },
+  "AZURE_METADATA": {
+    "LOCAL_METADATA_FLAG": 0,
+    "ANIMATION_OR_PICTURE_FLAG": 1,
+    "CHECK_QUEUE_FREQ": 100,
+    "AZURE_METADATA_VER": "v001",
+    "VERSION": "v117",
+    "METADATA_DATE": "2023-08-22",
+    "PREV_VERSION": "v116",
+    "DFE_VERSION": "8.2.0.137.9",
+    "DFE_VERSION_DATE": "2023-03-01",
+    "PLC_VERSION": "V1.4.58.7",
+    "PLC_VERSION_DATE": "2023-03-01",
+    "SW_VERSION": "16000.0.973- patch.71",
+    "SW_VERSION_DATE": "2023-03-01",
+    "json_ver": "1.1.1",
+    "app_ver": "1.1.1",
+    "daily_report_ver": "v109",
+    "METADATA_FILE_NAME": "sys_db.json",
+    "METADATA_ROOT_PATH": "./output/metadata",
+    "METADATA_PATH": "./output/metadata/sys_db.json",
+    "DT_FORMAT": "%Y-%m-%d",
+    "T_FORMAT": "%H:%M",
+    "DT_YYYY_MM_DD__HH_MM": "%Y-%m-%d__%H:%M",
+    "METADATA_TODAY": "2023-08-23",
+    "ROOT_OUTPUT_PATH": "output",
+    "FILES_FOLDER_PATH": "files",
+    "IMAGES_PATH": "images",
+    "DATA_PATH": "data",
+    "LOG_PATH": "log",
+    "FILES_PATH_FULL": "output\\files",
+    "IMAGES_PATH_FULL": "output\\images",
+    "DATA_PATH_FULL": "output\\data",
+    "LOG_PATH_FULL": "output\\log",
+    "FOLDERS_FULL_PATHS": {
+      "FOLDERS_FULL_PATHS_JSONS": "output\\data\\jsons",
+      "FOLDERS_FULL_PATHS_EXPORTED": "output\\data\\exported"
+    },
+    "folders_arch": {
+      "fa_PushExpDataPathRel": "push_exported_data\\",
+      "fa_PushExpDataPathRelCMD": "push_exported_data_CMD\\",
+      "fa_PullExpDataPathRel": "pull_data\\"
+    },
+    "folders_arch_comb": {
+      "fa_Images_comb": "Images",
+      "fa_comb_logs": "output\\logs",
+      "fa_comb_output_images": "output\\images",
+      "fa_comb_output_files": "output\\files",
+      "fa_comb_push": "data\\push_exported_data",
+      "fa_comb_pull": "data\\pull_imported_data"
+    },
+    "folders_to_upload": {
+      "fa_comb_push": [
+        "data\\push_exported_data",
+        1,
+        1
+      ],
+      "fa_comb_logs": [
+        "output\\logs",
+        1,
+        0
+      ],
+      "fa_comb_output_images": [
+        "output\\images",
+        0,
+        0
+      ],
+      "fa_comb_output_files": [
+        "output\\files",
+        0,
+        0
+      ]
+    },
+    "sa_folders_to_upload": {
+      "sa_fa_comb_logs": "sa_output\\logs",
+      "sa_fa_comb_output_images": "sa_output\\images",
+      "sa_fa_comb_output_files": "sa_output\\files",
+      "sa_fa_comb_data_pull": "sa_output\\data\\pull_imported_data",
+      "sa_fa_comb_data_push": "sa_output\\data\\push_imported_data"
+    },
+    "paths": {
+      "PressEsExporter": "S:\\Press\\PressTools.EsExporter.exe",
+      "exportedData": "C:\\ExportedEsData\\",
+      "exBatPath": "bats\\",
+      "exDataPath": "data\\",
+      "PushExpDataPathRel": "data\\push_exported_data\\",
+      "PushExpDataPathRelCMD": "data\\push_exported_data_CMD",
+      "PullExpDataPathRel": "data\\pull_data\\",
+      "sqldbPath": "sqldb\\",
+      "databaseName": "PressDB.db",
+      "sqldbPath_csv": "sqldb\\db_csv",
+      "pressDBpath": "S:\\Press\\PressDB.db",
+      "exe_comm": "bats\\V12Daily_report_v109.exe",
+      "analysis_data_root_path": "data\\pull_data"
+    },
+    "batsFiles": {
+      "press-bat-exporter": "bats\\GCSGetRecorded.bat"
+    },
+    "freecmd": {
+      "comm": "@echo off && echo V12 && pause"
+    },
+    "LOG_DAYS_TO_DELETE": 1,
+    "LOG_FATAL_ERRORS": [],
+    "DELETED_FILES": [],
+    "LOG_PREFIX": "log__",
+    "LOG_T_FORMAT": "%H-%M",
+    "LOG_YYYY_MM_DD__HH_MM": "%Y-%m-%d__%H-%M",
+    "logApp": {
+      "AppLogName": "AppLogger",
+      "fields": [
+        "asctime",
+        "levelname",
+        "message",
+        "name"
+      ]
+    },
+    "ROOT_README_FILE_NAME": "./output/metadata/README.txt",
+    "AZK": "da",
+    "LOCAL_MACHINE": "hpcnd1270882",
+    "USER": "biton",
+    "CONF_CONTAINER_NAME": "sysdb",
+    "container_name": "gcsteamcont",
+    "prssSNSeparator": "___SN___",
+    "combineSeperator": "_COMB",
+    "dfSeparator": "_From",
+    "output_json_path": "data\\",
+    "output_json_name": "storage_containers_blobs.json",
+    "users_pc": {
+      "hpcnd1270882": "biton"
+    },
+    "presses": {
+      "b70001000": "70001000",
+      "b70001001": "70001001",
+      "b70001002": "70001002",
+      "b70001003": "70001003",
+      "b70001004": "70001004",
+      "b70001005": "70001005"
+    },
+    "PREVIOUS_PRESS_SN": "bxxxxxxxx",
+    "widget_sizes": {
+      "width": 30,
+      "height": 5
+    },
+    "color_name_mapping": {
+      "#ccffcc": "lightgreen",
+      "#ffe6cc": "lightorange",
+      "#ffffcc": "lightyellow",
+      "#e6ccff": "lightpurple",
+      "#ffcccc": "red",
+      "#999900": "darkyellow",
+      "#87CEFA": "lightskyblue",
+      "#9370DB": "mediumorchid",
+      "#BC0E00": "darkred",
+      "#EBB517": "goldenrod",
+      "#FFD700": "gold",
+      "#90EE90": "lightgreen",
+      "#008000": "green",
+      "#0000FF": "blue",
+      "#20B2AA": "lightseagreen",
+      "#778899": "lightslategray",
+      "#FF8C00": "darkorange",
+      "#FF4500": "orangered",
+      "#2E8B57": "seagreen",
+      "#6B8E23": "olivedrab",
+      "#8B4513": "saddlebrown",
+      "#D2B48C": "tan",
+      "#D8BFD8": "thistle",
+      "#FA8072": "salmon",
+      "#F5DEB3": "wheat",
+      "#C71585": "mediumvioletred"
+    },
+    "indexes": {
+      "press-state-history": "press-state-history*",
+      "restart-history": "restart-history*",
+      "event-history": "*event-history*"
+    },
+    "DICT_PRESS_STATUS_OPTIONS_n_COLORS": [
+      [
+        "Printing",
+        "lightgreen",
+        "#ccffcc"
+      ],
+      [
+        "Printing with limitation",
+        "orange",
+        "#ffe6cc"
+      ],
+      [
+        "Proactive shutdown",
+        "#999900",
+        "#ffffcc"
+      ],
+      [
+        "Pending customer",
+        "purple",
+        "#e6ccff"
+      ],
+      [
+        "MD - Troubleshooting",
+        "red",
+        "#ffcccc"
+      ],
+      [
+        "MD - Waiting for parts",
+        "red",
+        "#ffcccc"
+      ],
+      [
+        "MD - Escalation",
+        "red",
+        "#ffcccc"
+      ]
+    ],
+    "DICT_SHIFT_OPTIONS": [
+      "Morning",
+      "Noon",
+      "Night"
+    ],
+    "shift_options": {
+      "Morning": 1,
+      "Noon": 0,
+      "Night": 0
+    },
+    "topics_menu": {
+      "--Troubleshooting--": [
+        {
+          "topic": "SW issue",
+          "description": "Description for SW issue",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "PQ issue",
+          "description": "Description for PQ issue",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "PQ issue + fix / clean",
+          "description": "Description for PQ issue requiring fix or cleaning",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "PQ issue + Part replace",
+          "description": "Description for PQ issue requiring part replacement",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "PQ issue + Consumable replace",
+          "description": "PQ issue requiring consumable replacement",
+          "family": "PQ issue",
+          "family_colormap": "Purples"
+        },
+        {
+          "topic": "HW issue",
+          "description": "Description for HW issue",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "HW issue + fix / clean",
+          "description": "Description for HW issue requiring fix or cleaning",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "HW issue + Part replace",
+          "description": "Description for HW issue requiring part replacement",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "HW issue + Consumable replace",
+          "description": "HW issue requiring consumable replacement",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "other",
+          "description": "Description for other site reasons",
+          "family": "Other",
+          "family_colormap": "spring"
+        }
+      ],
+      "--Active actions--": [
+        {
+          "topic": "Power up",
+          "description": "Description or notes for Power up",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Part replacement",
+          "description": "Description for Part replacement",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "Scheduled Maintenance",
+          "description": "Description for Scheduled Maintenance",
+          "family": "Maintenance",
+          "family_colormap": "Greens"
+        },
+        {
+          "topic": "Unscheduled Maintenance",
+          "description": "Description for Unscheduled Maintenance",
+          "family": "Maintenance",
+          "family_colormap": "Greens"
+        },
+        {
+          "topic": "Web break",
+          "description": "Description for Unscheduled Maintenance",
+          "family": "HW issue",
+          "family_colormap": "Reds"
+        },
+        {
+          "topic": "other",
+          "description": "Description for other site reasons",
+          "family": "Other",
+          "family_colormap": "spring"
+        }
+      ],
+      "--Site's reasons--": [
+        {
+          "topic": "Operator duties",
+          "description": "Description for Operator duties",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Pending job",
+          "description": "Description for Pending job",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Pending substrate",
+          "description": "Description for Pending substrate",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Site maintenance",
+          "description": "Description for Site maintenance",
+          "family": "Maintenance",
+          "family_colormap": "Greens"
+        },
+        {
+          "topic": "other",
+          "description": "Description for other site reasons",
+          "family": "Other",
+          "family_colormap": "spring"
+        },
+        {
+          "topic": "Select",
+          "description": "",
+          "family": "Other",
+          "family_colormap": "spring"
+        }
+      ]
+    },
+    "state_colors": {
+      "Power-Up": "#87CEFA",
+      "Init": "#9370DB",
+      "Off": "#BC0E00",
+      "Service": "#EBB517",
+      "Standby": "#FFD700",
+      "GetReady": "#90EE90",
+      "Ready": "#008000",
+      "Print": "#0000FF",
+      "Pre / Post Print": "#20B2AA",
+      "Shutdown": "#778899",
+      "Restart": "#FF8C00"
+    },
+    "press_status_colors": {
+      "Printing": "#ccffcc",
+      "Printing with limitation": "#ffe6cc",
+      "Proactive shutdown": "#ffffcc",
+      "Pending customer": "#e6ccff",
+      "MD - Troubleshooting": "#ffcccc",
+      "MD - Waiting for parts": "#ffcccc",
+      "MD - Escalation": "#ffcccc"
+    }
+  }
+}

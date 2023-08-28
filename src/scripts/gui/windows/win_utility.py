@@ -14,7 +14,6 @@ import copy
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter.ttk import Progressbar
-
 from tkinter import messagebox                                                                                          # messagebox.showerror(title="Error", message=f'Processing step {i}')
 # from tkcalendar import DateEntry, Calendar
 # import datetime
@@ -28,8 +27,7 @@ def logger_explain_template(func=None, err=None):
 def daniel(_val=None, _name=None, level=1):
     """level [0 == the current func, 1 == the previous func (default), 2 == the previous previous func, ...., -1 == the root func]"""
     p = f'{_name}:{_val} # File:{inspect.getouterframes(inspect.currentframe())[level].filename} # Line:{inspect.getouterframes(inspect.currentframe())[level].lineno}'
-    print("############################################################################################################")
-    print(p)
+    print("\033[94m{}\033[0m".format(f"### {p}"))
     return p
 def colors_dict_to_tuples(color_dict, color_name_mapping):
     result = []
@@ -39,11 +37,6 @@ def colors_dict_to_tuples(color_dict, color_name_mapping):
     return result
 def check_queue():
     while not SHARE_DATA.TASK_QUEUE.empty():
-        # if SHARE_DATA.PAUSE_ALL_THREADS_EVENT.is_set():
-        #     while SHARE_DATA.ERROR_MESSAGE_FLAG == "ok":
-        #         time.sleep(1)  # Sleep until the event is cleared
-        #     SHARE_DATA.ERROR_MESSAGE_FLAG = ""
-        #     continue
         try:
             task, origin = SHARE_DATA.TASK_QUEUE.get()
         except:
@@ -51,7 +44,7 @@ def check_queue():
             task = SHARE_DATA.TASK_QUEUE.get()
         res = task()                                                                                                    # Execute the task
         SHARE_DATA.TASK_RESULT[origin] = res
-        print(SHARE_DATA.TASK_RESULT[origin])
+        daniel(_val=SHARE_DATA.TASK_RESULT[origin], _name="SHARE_DATA.TASK_RESULT[origin]", level=1)
     SHARE_DATA.ROOT.after(SHARE_DATA.CHECK_QUEUE_FREQ, check_queue)                                                     # Check the queue again after 100ms
 
 def register_thread(thread):
@@ -63,31 +56,36 @@ def register_thread(thread):
 def handle_thread_completion(thread, st):                                                                               # Custom logic for handling thread completion
     if thread.name=="azure_initialization_thread":                                                                      # Updating From Azure Data
         # TODO: verify if the Azure connection Succeed or we are locally >>>> If Locally treat the SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)
-
         daniel(_val=SHARE_DATA.METADATA, _name="SHARE_DATA.METADATA", level=2)
+        daniel(_val=SHARE_DATA.AZURE_STORAGE, _name="SHARE_DATA.AZURE_STORAGE", level=2)
 
         SHARE_DATA.PRESS_SN.extend(list(SHARE_DATA.METADATA["presses"]))
         SHARE_DATA.METADATA["DICT_PRESS_STATUS_OPTIONS_n_COLORS"] = colors_dict_to_tuples(color_dict=SHARE_DATA.METADATA["press_status_colors"], color_name_mapping=SHARE_DATA.METADATA["color_name_mapping"])
         SHARE_DATA.METADATA["DICT_SHIFT_OPTIONS"] = tuple(SHARE_DATA.METADATA["shift_options"].keys())
+
         while "Window_4" not in SHARE_DATA.MANAGER.windows:
             time.sleep(0.5)
+        if SHARE_DATA.AZURE_CONNECT_FLAG:
+            SHARE_DATA.MANAGER.windows["Window_4"].update_azure_indicator(True)
+        else:
+            SHARE_DATA.MANAGER.windows["Window_4"].update_azure_indicator(False)
         SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN)                            # updating dropdown list when the thread is done
 
-
-        print("-PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE--PAUSE-")
-        print(SHARE_DATA.AZURE_STORAGE)
+        # TODO: try to read the local machine if exist (Read from the)
         print(SHARE_DATA.METADATA["presses"].get(SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"], False))
-
         if SHARE_DATA.METADATA["LOCAL_METADATA_FLAG"]:
             try:
                 print(SHARE_DATA.METADATA["presses"].get(SHARE_DATA.METADATA["PREVIOUS_PRESS_SN"], False))
             except Exception as e:
                 # TODO USING OPEN JSON FUNC FROM OLDER VERSION - Remember to update (SHARE_DATA.MANAGER.windows["Window_4"].update_press_sn_dropdown(SHARE_DATA.PRESS_SN))!
                 APPLOGGER.error(logger_explain_template(func={inspect.currentframe().f_code.co_name}, err=e))
+
         SHARE_DATA.THREADS_DICT[thread.name].tr_duration_func()
-        daniel(SHARE_DATA.THREADS_DICT[thread.name].tr_duration, "SHARE_DATA.THREADS_DICT[thread.name].tr_duration")
+        daniel(_val=SHARE_DATA.THREADS_DICT[thread.name].tr_duration, _name="SHARE_DATA.THREADS_DICT[thread.name].tr_duration")
+
     elif thread.name=="background_tasks_window_5":
         try:
+
             SHARE_DATA.MANAGER.windows["Window_SUPPORTER"].stop_loading_animation()
         except Exception as e:
             # TODO: Error handling system regarding missing rowData!
@@ -275,6 +273,20 @@ class BaseWindow(tk.Toplevel):                                                  
         self.deiconify()
     def hide(self):
         self.withdraw()
+    def custom_error_dialog(self, message):
+        # Create a top-level window
+        dialog = tk.Toplevel(self.master)
+        dialog.title("Error")
+        dialog.protocol('WM_DELETE_WINDOW', dialog.destroy)
+
+        # Create a label with the error message
+        label = tk.Label(dialog, text=message, justify=tk.LEFT, font=("Arial", 12))  # You can adjust font size here
+        label.pack(padx=20, pady=20)
+
+        # Add a button to close the dialog
+        close_button = tk.Button(dialog, text="Close", command=dialog.destroy)
+        close_button.pack(pady=10)
+        dialog.deiconify()
 class TRS:
     def __init__(self, tr):
         self.tr             = tr
@@ -296,7 +308,7 @@ class SharedData:
         self.ROOT  = None
         self.MANAGER = None
         self.AZURE_MAINAGENT = None
-        self.AZURE_CONNECTION_FLAG = False
+        self.AZURE_CONNECT_FLAG = False
         self.AZURE_STORAGE = None
         self.AZURE_METADATA = {}                                                                                        # This is the whole configuration azure SHARE_DATA.CONFIG["RUNTIME_AZURE_CONF_JSON"]["presses"] or SHARE_DATA.CONFIG[""]["presses"]!
         self.REF_AZURE_METADATA = {}
@@ -308,6 +320,7 @@ class SharedData:
         self.THREADS_LIST_LOCK = threading.Lock()
         ### runtime variables ###
         self.METADATA = copy.deepcopy(DMD.LOCAL_METADATA)
+        self.EXPORTED_STORAGE = {}
         self.CHECK_QUEUE_FREQ = DMDD["LOCAL_METADATA"]["CHECK_QUEUE_FREQ"]
         self.PAUSE_ALL_THREADS_EVENT = threading.Event()
         self.WINDOWS_CLASSES = {}
@@ -319,10 +332,11 @@ class SharedData:
         self.END_DATE = None
         self.END_TIME = None
         self.ERROR_MESSAGE_FLAG = ""
-    def update_attribute(self, atr, value):
+    def update_attribute(self, atr):
         with self.THREADS_LIST_LOCK:
-            atr = value
-    def get_attribute(self, atr):
+            self.some_attribute = atr
+            return self.some_attribute
+    def get_attribute(self):
         with self.THREADS_LIST_LOCK:
-            return atr
+            return self.some_attribute
 SHARE_DATA = SharedData()

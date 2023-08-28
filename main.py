@@ -9,6 +9,10 @@
 #                       DATE & TIME PICKER [time-dimmed]
 #  #####################################################################################################################
 ### General Imports ###
+# from termcolor import colored
+# import colorama
+# colorama.init()
+
 _temp = False
 if _temp:
     from temp import *
@@ -20,8 +24,8 @@ import time
 import traceback
 import inspect
 ### EXTERNAL IMPORT ###
+from src.scripts.system.config import azure_initialization, DMD, files_n_folders, old_logs_deletion_files_automation
 from src.scripts.system.applogger import APPLOGGER
-from src.scripts.system.config import folders_handler, old_logs_deletion_files_automation, azure_initialization
 from src.scripts.gui.windows.win_utility import SHARE_DATA, register_thread, background_thread_checker
 from src.scripts.gui.gui_handling_system import MAIN_GUI_HANDLING_SYS                                                   # from src.scripts.gui.gui_manager import main_gui_start
 ###### WEB GUI
@@ -47,14 +51,14 @@ def monitor_browser(driver, should_shutdown):
             if driver:
                 driver.quit()                                                                                           # Close the browser
             break
-def files_n_folders():
-    folders_handler(path=os.path.join('output', 'data', 'jsons'))
-
 ########################################################################################################################
 ########################################################################################################################
 ########################################################################################################################
 if __name__ == '__main__':
     if not _temp:
+        print("\033[94mThis is blue text!\033[0m")
+        print("\033[41mThis is red background!\033[0m")
+        print("\033[92mThis is green text with \033[45ma magenta background\033[0m!")
         st = time.time()
         threading.Thread(target=files_n_folders, daemon=True).start()
         threading.Thread(target=old_logs_deletion_files_automation, daemon=True).start()
