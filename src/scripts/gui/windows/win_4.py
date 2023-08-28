@@ -1,3 +1,4 @@
+
 from src.scripts.system.config import DMD
 from src.scripts.system.applogger import APPLOGGER
 from src.scripts.gui.windows.win_utility import SHARE_DATA, BaseWindow, logger_explain_template, create_tooltip
@@ -9,6 +10,8 @@ import inspect
 from PIL import Image, ImageTk, ImageEnhance
 import tkinter as tk
 from tkcalendar import Calendar
+from src.scripts.analysis.data_loading import data_loading
+from tkinter import messagebox
 class Window_4(BaseWindow):
     def __init__(self, root, manager, shared_data=None, relation=None, extra_width=0, extra_height=0):
         super().__init__(root, manager, shared_data, relation, extra_width, extra_height)
@@ -96,6 +99,15 @@ class Window_4(BaseWindow):
         self.right_frame.pack(side="right", anchor="ne")
         self.dev_var = tk.BooleanVar()
         self.dev_checkbox = tk.Checkbutton(self.right_frame, text="Dev", variable=self.dev_var, command=self.dev_checkbox_changed)
+        self.azure_var = tk.BooleanVar()
+        self.azure_checkbox = tk.Checkbutton(self.right_frame, text="Azure", variable=self.azure_var, state="disabled")
+
+        # self.radius = 5  # Circle's radius
+        # self.azure_flag = False  # Default value (False == Gray)
+        # self.azure_canvas = tk.Canvas(self.right_frame, width=4 * self.radius, height=4 * self.radius, bg="white", highlightthickness=0)
+        # self.circle = self.azure_canvas.create_oval(self.radius, self.radius, 2 * self.radius, 2 * self.radius, fill="gray")  # Default color is gray
+        # self.azure_label = tk.Label(self.right_frame, text="Azure")
+
         APPLOGGER.info(f'The Frame <{inspect.currentframe().f_code.co_name}> has been created.')
     def create_frame_2(self):                                                                                           # Frame 2 (F2): "dateNtime"
         self.f2 = tk.Frame(self)
@@ -122,7 +134,7 @@ class Window_4(BaseWindow):
         ### Left side: Start section ###
         self.start_frame = tk.Frame(self.right_frame)
         self.start_frame.pack(side="left", padx=10, pady=5)
-        self.set_start_button = tk.Button(self.start_frame, text="Click to set Start Date & Time", command=self.set_start, font=("Arial", 10, "bold"))
+        self.set_start_button = tk.Button(self.start_frame, text="Click to set Start Date & Time", command=self.set_start, font=("Arial", 10, "bold"), state="disable")
         self.set_start_button.pack(anchor="n")
         self.start_date_var = tk.StringVar(value=self.get_current_date())
         self.start_date_entry = tk.Entry(self.start_frame, textvariable=self.start_date_var, justify='center', width=30, state='readonly')
@@ -181,7 +193,7 @@ class Window_4(BaseWindow):
         self.dev_var.set(False)                                                                                         ### Resetting dev mode checkbox ###
     def initialize_tooltips(self):
         APPLOGGER.info(f'The <{inspect.currentframe().f_code.co_name}> has been activated.')
-        create_tooltip(self.set_start_button, "Set the start date and time to the selected values.")
+        create_tooltip(self.set_start_button, "Future Feature")
         create_tooltip(self.set_end_button, "Set the end date and time to the selected values.")
         create_tooltip(self.dev_checkbox, "Enable development mode (for debugging or advanced features).")
     def dev_checkbox_changed(self):
@@ -189,6 +201,9 @@ class Window_4(BaseWindow):
             self.initialize_data_from_external()                                                                        # TODO: Placeholder function
         else:
             self.root.withdraw()
+    def update_azure_indicator(self, flag):
+        self.azure_var.set(flag)
+
     def initialize_data_from_external(self):
         APPLOGGER.info(f'The <{inspect.currentframe().f_code.co_name}> has been activated!')                            # TODO: Placeholder values
     def get_press_sn_values(self):
@@ -209,7 +224,10 @@ class Window_4(BaseWindow):
             self.stop_loading_animation()
             self.return_button.pack(side="left")
             self.reset_button.pack(side="left", padx=10)
-            self.dev_checkbox.pack(anchor="ne")
+            self.dev_checkbox.pack(anchor="nw")
+
+            self.azure_checkbox.pack(anchor="nw")
+
             self.press_sn_dropdown.config(width=50)
             self.press_sn_dropdown.pack(anchor="n")
             self.activate_deactivate_pic_images(flag=True)                                                              # Set regular image to the button enabled
@@ -282,19 +300,23 @@ class Window_4(BaseWindow):
             self.supporter_button.config(image=self.dimmed_supporter_image_tk, state=tk.DISABLED)                       # Set the dimmed image to the button and disable it
             self.press_pc_button.config(image=self.dimmed_press_pc_image_tk, state=tk.DISABLED)                         # Set the dimmed image to the button and disable it
     def confirm_and_proceed(self):
+        print("dsjlkjaskd")
+        SHARE_DATA.PRESS = self.press_sn_var.get()
         SHARE_DATA.START_DATE = self.start_date_var.get()
         SHARE_DATA.START_TIME = self.start_time_var.get()
         SHARE_DATA.END_DATE = self.end_date_var.get()
         SHARE_DATA.END_TIME = self.end_time_var.get()
-        print(f"Start Date: {self.start_date_var.get()}, Start Time: {self.start_time_var.get()}")                      # TODO: Placeholder for functionality that you'd like to add when 'Confirm' is clicked. For now, we'll simply display the values chosen in this window.
-        print(f"End Date: {self.end_date_var.get()}, End Time: {self.end_time_var.get()}")                              # TODO: If you want to transition to the next window, add the necessary code here. For demonstration purposes, we'll just close the current window.
-        return True
+        # threading.Thread(target=data_loading, daemon=True).start()
+        return data_loading()
     def supporter_action(self):
         self.button_clicked = True
         if self.confirm_and_proceed():
             self.manager.hide_window(self.__class__.__name__)
             self.manager.show_window("Window_SUPPORTER")
         else:
+            _err = f'No data exist!\n'
+            self.custom_error_dialog(message="Data is missing\nChange Press or Date!")
+            # messagebox.showerror(title="Error", message=f'Processing step', )
             pass
             # TODO: DATA LOADING ISSUES
         print("Supporter button clicked!")                                                                              # TODO: Add your logic here...SUPPORTER

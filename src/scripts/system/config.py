@@ -1,3 +1,5 @@
+import inspect
+import re
 from src.scripts.cloud.azure_interface import func_initial_azure
 from datetime import datetime as dt, timedelta as td
 import threading
@@ -7,11 +9,22 @@ import json
 import getpass
 import socket
 import copy
+def daniel(_val=None, _name=None, level=1):
+    """level [0 == the current func, 1 == the previous func (default), 2 == the previous previous func, ...., -1 == the root func]"""
+    p = f'{_name}:{_val} # File:{inspect.getouterframes(inspect.currentframe())[level].filename} # Line:{inspect.getouterframes(inspect.currentframe())[level].lineno}'
+    print("\033[94m{}\033[0m".format(f"### {p}")) #"\033[91m{}\033[0m" == RED, "\033[94m{}\033[0m" == BLUE
+    return p
 def func_remove_symbols(input_string):
     return ''.join(char.lower() for char in input_string if char.isalnum())
 def folders_handler(path):
     if not os.path.exists(path):
         os.makedirs(path)
+def files_n_folders():
+    folders_handler(path=DMD.LOCAL_METADATA["FILES_PATH_FULL"])
+    folders_handler(path=DMD.LOCAL_METADATA["IMAGES_PATH_FULL"])
+    folders_handler(path=DMD.LOCAL_METADATA["DATA_PATH_FULL"])
+    folders_handler(path=DMD.LOCAL_METADATA["FOLDERS_FULL_PATHS"]["FOLDERS_FULL_PATHS_JSONS"])
+    folders_handler(path=DMD.LOCAL_METADATA["FOLDERS_FULL_PATHS"]["FOLDERS_FULL_PATHS_EXPORTED"])
 def old_logs_deletion_files_automation():
     cutoff = dt.now() - td(days=DMDD["LOCAL_METADATA"]["LOG_DAYS_TO_DELETE"])
     log_files = glob.glob(f'{DMDD["LOCAL_METADATA"]["LOG_PATH_FULL"]}\\{DMDD["LOCAL_METADATA"]["LOG_PREFIX"]}*')
@@ -25,13 +38,10 @@ def old_logs_deletion_files_automation():
 class conf:
     def __init__(self):
         self.initializing_metadata_dictionaries()
+        # self.LOCAL_RAW_DATA = {}
+        # self.LOCAL_METADATA = {}
         ################################################################################################################
         self.AZURE_METADATA                         = {}
-        self.PRESS_DICT                             = {
-                                                        "SN"                    : self.PREVIOUS_PRESS_SN,
-                                                        "PRESS_STATUS_COLORS"   : self.DICT_PRESS_STATUS_OPTIONS_n_COLORS,
-                                                        "DICT_SHIFT_OPTIONS"    : self.DICT_SHIFT_OPTIONS
-                                                      }
         self.conf_read_or_write_meta_data_json()
         ####################################### Inherent params ########################################################
         self.lock = threading.Lock()                                                                                    # Add a lock attribute to the class
@@ -77,7 +87,9 @@ class conf:
         self.daily_report_ver = "v109"
     def files(self):
         self.METADATA_FILE_NAME     = "sys_db.json"
-        self.METADATA_PATH          = f"./src/metadata/{self.METADATA_FILE_NAME}"
+        self.METADATA_ROOT_PATH     = "./output/metadata"
+        self.METADATA_PATH          = f"{self.METADATA_ROOT_PATH}/{self.METADATA_FILE_NAME}"
+        folders_handler(self.METADATA_ROOT_PATH)
     def formats(self):
         self.DT_FORMAT                              = "%Y-%m-%d"
         self.T_FORMAT                               = "%H:%M"
@@ -93,11 +105,15 @@ class conf:
         self.IMAGES_PATH_FULL                       = os.path.join(self.ROOT_OUTPUT_PATH, self.IMAGES_PATH)
         self.DATA_PATH_FULL                         = os.path.join(self.ROOT_OUTPUT_PATH, self.DATA_PATH)
         self.LOG_PATH_FULL                          = os.path.join(self.ROOT_OUTPUT_PATH, self.LOG_PATH)
+        self.FOLDERS_FULL_PATHS                             = {
+                                                        "FOLDERS_FULL_PATHS_JSONS"          :   os.path.join(self.DATA_PATH_FULL, 'jsons'),
+                                                        "FOLDERS_FULL_PATHS_EXPORTED"       :   os.path.join(self.DATA_PATH_FULL, 'exported')
+                                                    }
         self.folders_arch                           = {
                                                         "fa_PushExpDataPathRel"	    : "push_exported_data\\",
                                                         "fa_PushExpDataPathRelCMD"	: "push_exported_data_CMD\\",
                                                         "fa_PullExpDataPathRel"		: "pull_data\\"
-                                                        }
+                                                    }
         self.folders_arch_comb                      = {
                                                         "fa_Images_comb"		    :"Images",
                                                         "fa_comb_logs"			    :"output\\logs",
@@ -105,7 +121,7 @@ class conf:
                                                         "fa_comb_output_files"		:"output\\files",
                                                         "fa_comb_push"				:"data\\push_exported_data",
                                                         "fa_comb_pull"				:"data\\pull_imported_data"
-                                                        }
+                                                    }
         self.folders_to_upload                      = {
                                                         "fa_comb_push"				:["data\\push_exported_data",		 1,	1],
                                                         "fa_comb_logs"				:["output\\logs",					 1,	0],
@@ -146,7 +162,7 @@ class conf:
         self.LOG_YYYY_MM_DD__HH_MM                  = f"{self.DT_FORMAT }__{self.LOG_T_FORMAT}"
         self.logApp                                 = {"AppLogName": "AppLogger", "fields": ["asctime", "levelname", "message", "name"]}
     def azure(self):
-        self.ROOT_README_FILE_NAME                  = "README.txt"
+        self.ROOT_README_FILE_NAME                  = f"{self.METADATA_ROOT_PATH}/README.txt"
         self.AZK                                    = "DefaultEndpointsProtocol=https;AccountName=v12daily;AccountKey=2tBxBHZwM5WNyzPAyozRtsircGCFBAMN2S3TfZGFN923bIlkWAjdn5scM5vV5TkYPFKvukfD/cL5+AStMluGag==;EndpointSuffix=core.windows.net"
         self.LOCAL_MACHINE                          = func_remove_symbols(socket.gethostname())
         self.USER                                   = getpass.getuser()
@@ -164,7 +180,8 @@ class conf:
                                                         "b70001002": "70001002",
                                                         "b70001003": "70001003",
                                                         "b70001004": "70001004",
-                                                        "b70001005": "70001005"
+                                                        "b70001005": "70001005",
+                                                        "b70001006": "70001006",
                                                     }
         self.PREVIOUS_PRESS_SN                          = "bxxxxxxxx"
     def gui(self):
@@ -410,18 +427,55 @@ class conf:
                 result = write_default_metadata()
         else:
             result = write_default_metadata()
-
         self.LOCAL_RAW_DATA         = copy.deepcopy(result)
         self.LOCAL_METADATA         = copy.deepcopy(result["LOCAL_METADATA"])
-        # self.METADATA = result
         return result
 DMD = conf()
 DMDD = DMD.LOCAL_RAW_DATA
+
+def func_swap_day_month_in_date(date_string):
+    if date_string:
+        parts = date_string.split('-')
+        if len(parts) == 3:
+            parts[1], parts[2] = parts[2], parts[1]
+            return '-'.join(parts)
+    return date_string
+def construct_structure(flat_data):
+    nested_structure = {"files": []}
+    for folder, files in flat_data.items():
+        nested_structure[folder] = {"files": []}
+        for file in files:
+            if file.endswith(".db"):
+                db_folder = nested_structure[folder].setdefault("pressDBdb", {"files": []})
+                db_folder["files"].append(file)
+            else:
+                # Extract date from the filename
+                match = re.search(r"\d{4}-\d{2}-\d{2}", file)
+                if match:
+                    date = func_swap_day_month_in_date(match.group())
+                    date_folder = nested_structure[folder].setdefault(date, {"files": []})
+                    date_folder["files"].append(file)
+                else:
+                    nested_structure[folder]["files"].append(file)
+    return nested_structure
+def files_structure_reader(root_path):
+    folders_handler(root_path)
+    def recursive_build(directory):
+        structure = {"files": []}
+        for name in os.listdir(directory):
+            path = os.path.join(directory, name)
+            if os.path.isfile(path):
+                structure["files"].append(name)
+            else:
+                structure[name] = recursive_build(path)
+        return structure
+    return recursive_build(root_path)
 def azure_initialization(applogger, shared_data):
     shared_data.AZURE_MAINAGENT, shared_data.AZURE_STORAGE, shared_data.AZURE_METADATA, shared_data.AZURE_CONNECT_FLAG = func_initial_azure(applogger=applogger, local_metadata=DMD.LOCAL_METADATA)
     if shared_data.AZURE_CONNECT_FLAG:
         shared_data.REF_AZURE_METADATA = copy.deepcopy(shared_data.AZURE_METADATA)
         shared_data.METADATA = copy.deepcopy(shared_data.AZURE_METADATA["AZURE_METADATA"])
+        shared_data.EXPORTED_STORAGE = construct_structure(shared_data.AZURE_STORAGE)
         try:
             with open(DMD.LOCAL_METADATA["METADATA_PATH"], 'r') as f:
                 _data = json.loaf(f)
@@ -432,4 +486,6 @@ def azure_initialization(applogger, shared_data):
             json.dump(_data, f, indent=2)
     else:
         shared_data.METADATA = copy.deepcopy(DMD.LOCAL_METADATA)
+        shared_data.EXPORTED_STORAGE = files_structure_reader(root_path=DMD.LOCAL_METADATA["FOLDERS_FULL_PATHS"]["FOLDERS_FULL_PATHS_EXPORTED"])
+    daniel(_val=json.dumps(shared_data.EXPORTED_STORAGE, indent=4), _name="shared_data.EXPORTED_STORAGE")
     return

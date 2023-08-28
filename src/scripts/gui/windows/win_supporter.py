@@ -251,7 +251,7 @@ class Window_SUPPORTER(BaseWindow):
                     row = row_counters[frame]
                     create_row(frame, value.get('version', ''), value.get('status', ''), value.get('date', ''), row, status_vars, row_counters)
                     row_counters[frame] += 1
-            save_button = tk.Button(self.window, text="Save", command=lambda: save_press_version_data(row_counters, status_vars, original_keys))
+            save_button = tk.Button(self.window, text="Save", command=lambda: save_press_version_data(row_counters, status_vars, original_keys), font=("Arial", 10, "bold"))
             save_button.grid(row=1, column=0, columnspan=3, sticky='we')
             self.window.mainloop()
         load_and_create_versions_window()
@@ -333,7 +333,7 @@ class Window_SUPPORTER(BaseWindow):
                     row_counters[frame] += 1
                 add_button = tk.Button(frame, text="Add Person", command=lambda frame=frame: add_person(frame, status_vars, row_counters))
                 add_button.grid(row=1000, columnspan=3)
-            save_button = tk.Button(self.window, text="Save", command=lambda: save_data_fse(row_counters, status_vars, original_keys))
+            save_button = tk.Button(self.window, text="Save", command=lambda: save_data_fse(row_counters, status_vars, original_keys), font=("Arial", 10, "bold"))
             save_button.grid(row=1, column=0, columnspan=3, sticky='we')
             self.window.mainloop()
         load_and_create_fse_window()
@@ -401,7 +401,7 @@ class Window_SUPPORTER(BaseWindow):
         self.canvas.columnconfigure(0, weight=1)
         self.canvas.rowconfigure(0, weight=1)
 
-        self.add_main_btn = tk.Button(self.frame_inside_canvas, text="Add Row", command=self.add_row)                   # Define add_main_btn but don't grid it yet. It will be gridded in add_row()
+        self.add_main_btn = tk.Button(self.frame_inside_canvas, text="Add Row", command=self.add_row, font=("Arial", 10, "bold"))                   # Define add_main_btn but don't grid it yet. It will be gridded in add_row()
         self.add_row()
     def on_close(self):
         self.manager.windows["Window_4"].activate_deactivate_pic_images(flag=False)
@@ -418,13 +418,11 @@ class Window_SUPPORTER(BaseWindow):
     def create_activation_button(cls, root, command):
         text = "Activate " + cls.__name__
         return cls.create_text_button(root, command, text=text)
-
     def create_headers(self):
         headers = ["Category", "Start Time", "Middle Time", "End Time", "Description", "Function", "Actions"]
         for idx, header in enumerate(headers):
             label = tk.Label(self.frame_top_canvas, text=header, font=("Arial", 10, "bold"), bg="lightgray", relief=tk.RAISED)
             label.grid(row=0, column=idx, sticky='ew')
-
     def add_row(self):                                                                                                  # Function to add a new row of widgets to the canvas frame.
         _row_widgets = []                                                                                               # Initialize the list to hold this row's widgets
         categories = ["Category A", "Category B (Enables Middle Time)", "Category C"]

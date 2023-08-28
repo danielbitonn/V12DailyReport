@@ -1,7 +1,5 @@
-from src.scripts.system.config import DMDD, DMD
 from src.scripts.system.applogger import APPLOGGER
-from src.scripts.gui.windows.win_utility import SHARE_DATA, BaseWindow, logger_explain_template, create_tooltip
-
+from src.scripts.gui.windows.win_utility import SHARE_DATA, BaseWindow, logger_explain_template
 import time
 import os
 import threading
@@ -19,14 +17,14 @@ class Window_1(BaseWindow):
         self.processing_done = threading.Event()
         self.stop_event = threading.Event()
         # Schedule the design of the window in a background thread
-        threading.Thread(target=self.design_window, daemon=True).start()
+        threading.Thread(target=self.design_window_1, daemon=True).start()
+        print(f'The <{self.T}> which is created based on (BaseWindow class) with the relations:<{relation}> and Buttons.')
         APPLOGGER.info(f'The <{self.T}> which is created based on (BaseWindow class) with the relations:<{relation}> and Buttons.')
-
-    def design_window(self):
+    def design_window_1(self):
         # Finalize the design in the main thread
         time.sleep(10)
-        SHARE_DATA.TASK_QUEUE.put(self.finalize_window_design)
-    def finalize_window_design(self):
+        SHARE_DATA.TASK_QUEUE.put(self.finalize_window_1_design())
+    def finalize_window_1_design(self):
         ### Design & Widgets
         self.label = tk.Label(self, text="This is Window 1")
         self.label.pack()
